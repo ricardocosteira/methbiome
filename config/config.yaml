@@ -1,0 +1,77 @@
+__use_yte__: true # YTE: YAML template engine see https://yte-template-engine.github.io/
+
+############################################ The following is to be set by the user ############################################
+
+input_files:
+    data:
+        dir: m84140_241011_111127_s4 # Input directory in resources containing either ONT POD5 or PacBio BAM
+        type: PacBio # ONT or PacBio
+    minimap2_reference_filename: B_fragillis_OB_EAV1_11_D6_FAA.fasta # File should be in resources directory
+
+tool_specific_params: # Parameters used by the tools themselves
+    dorado:
+        min_quality: 10
+        trim: --no-trim # E.g. --no-trim, --trim all
+        methylation_model: hac,4mC_5mC,6mA
+        demultiplexing: True # True or False
+        mux_barcode_kit: SQK-NBD114-24 # Can be empty if demultiplex is False
+    modkit:
+        minimum_methylation_likelihood: 0.8 # filter-threshold in modkit
+
+############################## The following is generate from the above should NOT to be modified ##############################
+
+minimap2_reference_basename: ?this["input_files"]["minimap2_reference_filename"].split('.')[0]
+
+__variables__:
+    data_dir: ?this["input_files"]["data"]["dir"]
+    resources_dir: resources
+    results_dir: results
+    logs_dir: logs/rules
+
+resources:
+    dorado:
+        dir: ?f"{resources_dir}/dorado"
+        archive_path: ?f"{resources_dir}/dorado.tar.gz"
+        binary_path: ?this["resources"]["dorado"]["dir"] + "/bin/dorado"
+    kraken2_db:
+        dir: ?f"{resources_dir}/Kraken2DB_STANDARD"
+        installed: ?f"{resources_dir}/kraken2_db_installed.txt"
+        archive_path: ?f"{resources_dir}/kraken2_db.tar.gz"
+
+input:
+    data:
+        dir: ?f"{resources_dir}/{data_dir}"
+    reference:
+        path: ?f"{resources_dir}/" + this["input_files"]["minimap2_reference_filename"]
+
+results:
+    intermediate_bam_path: ?f"{results_dir}/{data_dir}.bam"
+    bam_dir: ?f"{results_dir}/{data_dir}_bam"
+    fastq_gz_dir: ?f"{results_dir}/{data_dir}_fastq_gz"
+    qc:
+        sequali:
+            dir: ?f"{results_dir}/sequali_{data_dir}"
+        multi_qc_report_path: ?f"{results_dir}/multiqc_report_{data_dir}.html"
+    kraken2:
+        dir: ?f"{results_dir}/kraken2_{data_dir}"
+        combined_mpa_path: ?f"{results_dir}/{data_dir}_Pilot.kreports.mpa"
+    minimap2:
+        dir: ?f"{results_dir}/minimap2_{data_dir}_" + this["minimap2_reference_basename"]
+        temp_dir: ?this["results"]["minimap2"]["dir"] + "_temp"
+        filtered_dir: ?this["results"]["minimap2"]["dir"] + "_filtered"
+    modkit:
+        dir: ?f"{results_dir}/modkit_{data_dir}"
+
+logs:
+    install_dorado: ?f"{logs_dir}/install_dorado.out"
+    dorado: ?f"{logs_dir}/dorado_{data_dir}.out"
+    fibertools_predict: ?f"{logs_dir}/fibertools_predict_{data_dir}.out"
+    bam_to_fastq_gz: ?f"{logs_dir}/bam_to_fastq_gz{data_dir}.out"
+    sequali: ?f"{logs_dir}/sequali_{data_dir}.out"
+    multiqc: ?f"{logs_dir}/multiqc_{data_dir}.out"
+    install_kraken2_db: ?f"{logs_dir}/install_kraken2_db.out"
+    kraken2: ?f"{logs_dir}/kraken2_{data_dir}.out"
+    combine_mpa: ?f"{logs_dir}/combine_mpa_{data_dir}.out"
+    minimap2: ?f"{logs_dir}/minimap2_{data_dir}.out"
+    filter_samtools: ?f"{logs_dir}/filter_samtools_{data_dir}.out"
+    modkit: ?f"{logs_dir}/modkit_{data_dir}.out"
