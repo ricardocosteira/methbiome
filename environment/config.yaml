@@ -26,7 +26,7 @@ set-resources:
         tasks: 0 # A zero value disables the --ntasks-per-cpu flag, we need that to fix 'SLURM_TRES_PER_TASK is mutually exclusive with --ntasks-per-gpu and SLURM_NTASKS_PER_GPU'
         gres: 'gpu:4'
         mem: 64000
-        runtime: 2880 # 48 hours
+        runtime: 2880 # Runtime is in minutes (= 48 hours)
 
     fibertools_predict:
         slurm_partition: cpu
