@@ -24,7 +24,7 @@ rule dorado:
             '{params.dorado_path}' basecaller \
                 --recursive \
                 --verbose \
-                '{params.trim}' \
+                {params.trim} \
                 --min-qscore '{params.min_quality}' \
                 --emit-moves \
                 '{params.methylation_model}' \
