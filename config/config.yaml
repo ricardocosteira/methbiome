@@ -4,16 +4,18 @@ __use_yte__: true # YTE: YAML template engine see https://yte-template-engine.gi
 
 input_files:
     data:
-        dir: m84140_241011_111127_s4 # Input directory in resources containing either ONT POD5 or PacBio BAM
-        type: PacBio # ONT or PacBio
+        dir: ds1564_1_P1 # Input directory in resources containing either ONT POD5 or PacBio BAM
+        type: ONT # ONT or PacBio
     minimap2_reference_filename: B_fragillis_OB_EAV1_11_D6_FAA.fasta # File should be in resources directory
+
+output_name: 23382_2
 
 tool_specific_params: # Parameters used by the tools themselves
     dorado:
         min_quality: 10
-        trim: --no-trim # E.g. --no-trim, --trim all
+        trim: --trim all # E.g. --no-trim, --trim all
         methylation_model: hac,4mC_5mC,6mA
-        demultiplexing: True # True or False
+        demultiplexing: False # True or False
         mux_barcode_kit: SQK-NBD114-24 # Can be empty if demultiplex is False
     modkit:
         minimum_methylation_likelihood: 0.8 # filter-threshold in modkit
@@ -23,12 +25,13 @@ tool_specific_params: # Parameters used by the tools themselves
 minimap2_reference_basename: ?this["input_files"]["minimap2_reference_filename"].split('.')[0]
 
 __variables__:
-    data_dir: ?this["input_files"]["data"]["dir"]
+    output_name: ?this["output_name"]
     resources_dir: resources
     results_dir: results
     logs_dir: logs/rules
 
 resources:
+    dir: ?f"{resources_dir}"
     dorado:
         dir: ?f"{resources_dir}/dorado"
         archive_path: ?f"{resources_dir}/dorado.tar.gz"
@@ -37,41 +40,50 @@ resources:
         dir: ?f"{resources_dir}/Kraken2DB_STANDARD"
         installed: ?f"{resources_dir}/kraken2_db_installed.txt"
         archive_path: ?f"{resources_dir}/kraken2_db.tar.gz"
+    genomad:
+        installed: ?f"{resources_dir}/genomad_installed.txt"
+        db_dir: ?f"{resources_dir}/genomad_db"
+        fasta_dir: ?f"{resources_dir}/genomad_fasta_{output_name}"
 
 input:
     data:
-        dir: ?f"{resources_dir}/{data_dir}"
+        dir: ?f"{resources_dir}/" + this["input_files"]["data"]["dir"]
     reference:
         path: ?f"{resources_dir}/" + this["input_files"]["minimap2_reference_filename"]
 
 results:
-    intermediate_bam_path: ?f"{results_dir}/{data_dir}.bam"
-    bam_dir: ?f"{results_dir}/{data_dir}_bam"
-    fastq_gz_dir: ?f"{results_dir}/{data_dir}_fastq_gz"
+    intermediate_bam_path: ?f"{results_dir}/{output_name}.bam"
+    bam_dir: ?f"{results_dir}/{output_name}_bam"
+    fastq_gz_dir: ?f"{results_dir}/{output_name}_fastq_gz"
     qc:
         sequali:
-            dir: ?f"{results_dir}/sequali_{data_dir}"
-        multi_qc_report_path: ?f"{results_dir}/multiqc_report_{data_dir}.html"
+            dir: ?f"{results_dir}/sequali_{output_name}"
+        multi_qc_report_path: ?f"{results_dir}/multiqc_report_{output_name}.html"
     kraken2:
-        dir: ?f"{results_dir}/kraken2_{data_dir}"
-        combined_mpa_path: ?f"{results_dir}/{data_dir}_Pilot.kreports.mpa"
+        dir: ?f"{results_dir}/kraken2_{output_name}"
+        combined_mpa_path: ?f"{results_dir}/{output_name}_Pilot.kreports.mpa"
+    genomad:
+        dir: ?f"{results_dir}/genomad_{output_name}"
     minimap2:
-        dir: ?f"{results_dir}/minimap2_{data_dir}_" + this["minimap2_reference_basename"]
+        dir: ?f"{results_dir}/minimap2_{output_name}_" + this["minimap2_reference_basename"]
         temp_dir: ?this["results"]["minimap2"]["dir"] + "_temp"
         filtered_dir: ?this["results"]["minimap2"]["dir"] + "_filtered"
     modkit:
-        dir: ?f"{results_dir}/modkit_{data_dir}"
+        dir: ?f"{results_dir}/modkit_{output_name}"
 
 logs:
     install_dorado: ?f"{logs_dir}/install_dorado.out"
-    dorado: ?f"{logs_dir}/dorado_{data_dir}.out"
-    fibertools_predict: ?f"{logs_dir}/fibertools_predict_{data_dir}.out"
-    bam_to_fastq_gz: ?f"{logs_dir}/bam_to_fastq_gz{data_dir}.out"
-    sequali: ?f"{logs_dir}/sequali_{data_dir}.out"
-    multiqc: ?f"{logs_dir}/multiqc_{data_dir}.out"
+    dorado: ?f"{logs_dir}/dorado_{output_name}.out"
+    fibertools_predict: ?f"{logs_dir}/fibertools_predict_{output_name}.out"
+    bam_to_fastq_gz: ?f"{logs_dir}/bam_to_fastq_gz{output_name}.out"
+    sequali: ?f"{logs_dir}/sequali_{output_name}.out"
+    multiqc: ?f"{logs_dir}/multiqc_{output_name}.out"
     install_kraken2_db: ?f"{logs_dir}/install_kraken2_db.out"
-    kraken2: ?f"{logs_dir}/kraken2_{data_dir}.out"
-    combine_mpa: ?f"{logs_dir}/combine_mpa_{data_dir}.out"
-    minimap2: ?f"{logs_dir}/minimap2_{data_dir}.out"
-    filter_samtools: ?f"{logs_dir}/filter_samtools_{data_dir}.out"
-    modkit: ?f"{logs_dir}/modkit_{data_dir}.out"
+    kraken2: ?f"{logs_dir}/kraken2_{output_name}.out"
+    install_genomad: ?f"{logs_dir}/install_genomad.out"
+    install_genomad_db: ?f"{logs_dir}/install_genomad_db.out"
+    genomad: ?f"{logs_dir}/genomad_{output_name}.out"
+    combine_mpa: ?f"{logs_dir}/combine_mpa_{output_name}.out"
+    minimap2: ?f"{logs_dir}/minimap2_{output_name}.out"
+    filter_samtools: ?f"{logs_dir}/filter_samtools_{output_name}.out"
+    modkit: ?f"{logs_dir}/modkit_{output_name}.out"
