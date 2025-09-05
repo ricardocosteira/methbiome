@@ -1,0 +1,68 @@
+# Config specific to Slurm execution
+# See https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html for details on how to set other resources types,
+# and https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles for documentation on profiles.
+
+############################## For SLURM execution the following does not need to be modified ##############################
+
+executor: slurm
+jobs: 10
+software-deployment-method: conda
+slurm-logdir: logs/cluster
+
+########################################## The following is to be set by the user ###########################################
+
+# Default resources are set for all rules.
+
+default-resources:
+    slurm_partition: cpu
+    tasks: 1
+    slurm_extra: '--mail-type=ALL --mail-user=example@email.com'
+
+# In set-resources, the special_rule overriding the defaults where specified.
+
+set-resources:
+    dorado:
+        slurm_partition: gpu
+        tasks: 0 # A zero value disables the --ntasks-per-cpu flag, we need that to fix 'SLURM_TRES_PER_TASK is mutually exclusive with --ntasks-per-gpu and SLURM_NTASKS_PER_GPU'
+        gres: 'gpu:4'
+        mem: 64000
+        runtime: 2880 # Runtime is in minutes (= 48 hours)
+
+    fibertools_predict:
+        slurm_partition: cpu
+        tasks: 100
+        mem: 64000
+        runtime: 2880
+
+    sequali:
+        slurm_partition: cpu
+        tasks: 20
+        mem: 64000
+        runtime: 240 # 4 hours
+
+    kraken2:
+        slurm_partition: cpu
+        tasks: 60
+        mem: 64000
+        runtime: 2880
+
+    genomad:
+        slurm_partition: cpu
+        tasks: 60
+        mem: 64000
+        runtime: 2880
+
+    minimap2:
+        slurm_partition: cpu
+        tasks: 60
+        mem: 64000
+        runtime: 2880
+
+    filter_samtools:
+        slurm_partition: cpu
+        tasks: 60
+
+    modkit:
+        slurm_partition: cpu
+        tasks: 60
+        runtime: 240
