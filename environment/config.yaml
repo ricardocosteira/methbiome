@@ -46,12 +46,6 @@ set-resources:
         mem: 64000
         runtime: 2880
 
-    genomad:
-        slurm_partition: cpu
-        tasks: 60
-        mem: 64000
-        runtime: 2880
-
     minimap2:
         slurm_partition: cpu
         tasks: 60
