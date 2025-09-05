@@ -40,10 +40,6 @@ resources:
         dir: ?f"{resources_dir}/Kraken2DB_STANDARD"
         installed: ?f"{resources_dir}/kraken2_db_installed.txt"
         archive_path: ?f"{resources_dir}/kraken2_db.tar.gz"
-    genomad:
-        installed: ?f"{resources_dir}/genomad_installed.txt"
-        db_dir: ?f"{resources_dir}/genomad_db"
-        fasta_dir: ?f"{resources_dir}/genomad_fasta_{output_name}"
 
 input:
     data:
@@ -62,8 +58,6 @@ results:
     kraken2:
         dir: ?f"{results_dir}/kraken2_{output_name}"
         combined_mpa_path: ?f"{results_dir}/{output_name}_Pilot.kreports.mpa"
-    genomad:
-        dir: ?f"{results_dir}/genomad_{output_name}"
     minimap2:
         dir: ?f"{results_dir}/minimap2_{output_name}_" + this["minimap2_reference_basename"]
         temp_dir: ?this["results"]["minimap2"]["dir"] + "_temp"
@@ -80,9 +74,6 @@ logs:
     multiqc: ?f"{logs_dir}/multiqc_{output_name}.out"
     install_kraken2_db: ?f"{logs_dir}/install_kraken2_db.out"
     kraken2: ?f"{logs_dir}/kraken2_{output_name}.out"
-    install_genomad: ?f"{logs_dir}/install_genomad.out"
-    install_genomad_db: ?f"{logs_dir}/install_genomad_db.out"
-    genomad: ?f"{logs_dir}/genomad_{output_name}.out"
     combine_mpa: ?f"{logs_dir}/combine_mpa_{output_name}.out"
     minimap2: ?f"{logs_dir}/minimap2_{output_name}.out"
     filter_samtools: ?f"{logs_dir}/filter_samtools_{output_name}.out"

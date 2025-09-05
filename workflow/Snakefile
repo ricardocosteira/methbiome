@@ -9,8 +9,6 @@ rule all:
         # Classification with kraken2
         config["results"]["kraken2"]["dir"],
         config["results"]["kraken2"]["combined_mpa_path"],
-        # Genomad
-        config["results"]["genomad"]["dir"],
         # Quality control with Sequali and MultiQC
         config["results"]["qc"]["sequali"]["dir"],
         config["results"]["qc"]["multi_qc_report_path"],
@@ -28,9 +26,6 @@ if config["input_files"]["data"]["type"] == "PacBio":
 include: "rules/bam_to_fastq_gz.smk"
 include: "rules/quality_control.smk"
 include: "rules/install_kraken2_db.smk"
-include: "rules/install_genomad.smk"
-include: "rules/install_genomad_db.smk"
-include: "rules/genomad.smk"
 include: "rules/kraken2.smk"
 include: "rules/minimap2.smk"
 include: "rules/modkit.smk"
