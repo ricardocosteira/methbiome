@@ -47,4 +47,20 @@ git clone https://github.com/ricardocosteira/methbiome
 
 ### C. Pipeline execution
 
-Execute [`run.sh`](run.sh) in a tmux session so that snakemake can continue running in the background.
+#### 1. Execution of the entire pipeline
+
+Open a tmux session so that snakemake can continue running in the background. Then, run the following command.
+
+```bash
+snakemake --profile environment
+```
+
+#### 2. Execution of part of the pipeline
+
+Open a tmux session so that snakemake can continue running in the background. Then, replace `rule_name` in the following command and run it. 
+
+This will run the pipeline up to the rule named `rule_name`, meaning that all rules on which `rule_name` depends are also executed.
+
+```bash
+snakemake --profile environment rule_name
+```
