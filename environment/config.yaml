@@ -28,6 +28,12 @@ set-resources:
         mem: 64000
         runtime: 2880 # Runtime is in minutes (= 48 hours)
 
+    jasmine:
+        slurm_partition: cpu
+        tasks: 100
+        mem: 64000
+        runtime: 2880
+
     fibertools_predict:
         slurm_partition: cpu
         tasks: 100

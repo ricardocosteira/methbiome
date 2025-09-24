@@ -1,15 +1,16 @@
-rule fibertools_predict:
+rule jasmine:
     input:
-        input_data=config["input"]["fibertools"]
+        input_data=config["input"]["jasmine"]
     output:
-        directory(config["results"]["bam_dir"])
+        directory(config["results"]["jasmine"])
     conda:
-        "../envs/fibertools.yaml"
+        "../envs/jasmine.yaml"
     log:
-        config["logs"]["fibertools_predict"]
+        config["logs"]["jasmine"]
     shell:
         """
         {{
+
             mkdir -p '{output}'
             
             for uBAM in '{input}'/*.bam; do
@@ -17,9 +18,8 @@ rule fibertools_predict:
                                 
                 filename_with_extension="$(basename "$uBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
-                
-                ft predict-m6a --keep -t "$(nproc)" -v "$uBAM" "{output}/$filename_without_extension.bam"
+                jasmine --keep-kinetics --num-threads "$(nproc)" "$uBAM" "{output}/$filename_without_extension.bam"
+
             done
         }} &> {log}
-
         """

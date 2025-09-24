@@ -23,6 +23,8 @@ if config["input_files"]["data"]["type"] == "ONT":
     include: "rules/dorado.smk"
 if config["input_files"]["data"]["type"] == "PacBio":
     include: "rules/fibertools_predict.smk"
+if config["input_files"]["data"]["type"] == "PacBio" and config["jasmine"]:
+    include: "rules/jasmine.smk"
 include: "rules/bam_to_fastq_gz.smk"
 include: "rules/quality_control.smk"
 include: "rules/install_kraken2_db.smk"

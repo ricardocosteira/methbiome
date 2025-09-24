@@ -1,12 +1,12 @@
 rule dorado:
     input:
-        input_dir=config["input"]["data"]["dir"],
+        input_dir=config["input"]["dorado"],
         dorado_dir=config["resources"]["dorado"]["dir"]
     output:
         directory(config["results"]["bam_dir"])
     params:
         dorado_path=config["resources"]["dorado"]["binary_path"],
-        intermediate_bam_path=config["results"]["intermediate_bam_path"],
+        intermediate_bam_path=config["results"]["dorado_intermediate_bam_path"],
         min_quality=config["tool_specific_params"]["dorado"]["min_quality"],
         trim=config["tool_specific_params"]["dorado"]["trim"],
         methylation_model=config["tool_specific_params"]["dorado"]["methylation_model"],

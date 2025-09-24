@@ -4,11 +4,15 @@ __use_yte__: true # YTE: YAML template engine see https://yte-template-engine.gi
 
 input_files:
     data:
-        dir: ds1564_1_P1 # Input directory in resources containing either ONT POD5 or PacBio BAM
+        dir: test # Input directory in resources containing either ONT POD5 or PacBio BAM
         type: ONT # ONT or PacBio
     minimap2_reference_filename: B_fragillis_OB_EAV1_11_D6_FAA.fasta # File should be in resources directory
 
-output_name: 23382_2
+output_name: test
+
+# Do we want to perform 5mC calling with Jasmine before 6mA calling with Fibertools?
+# This can be ignored if the data type is ONT
+jasmine: True # True or False
 
 tool_specific_params: # Parameters used by the tools themselves
     dorado:
@@ -29,6 +33,7 @@ __variables__:
     resources_dir: resources
     results_dir: results
     logs_dir: logs/rules
+    input_dir: ?f"{resources_dir}/" + this["input_files"]["data"]["dir"]
 
 resources:
     dir: ?f"{resources_dir}"
@@ -41,14 +46,9 @@ resources:
         installed: ?f"{resources_dir}/kraken2_db_installed.txt"
         archive_path: ?f"{resources_dir}/kraken2_db.tar.gz"
 
-input:
-    data:
-        dir: ?f"{resources_dir}/" + this["input_files"]["data"]["dir"]
-    reference:
-        path: ?f"{resources_dir}/" + this["input_files"]["minimap2_reference_filename"]
-
 results:
-    intermediate_bam_path: ?f"{results_dir}/{output_name}.bam"
+    jasmine: ?f"{results_dir}/{output_name}_jasmine"
+    dorado_intermediate_bam_path: ?f"{results_dir}/{output_name}.bam"
     bam_dir: ?f"{results_dir}/{output_name}_bam"
     fastq_gz_dir: ?f"{results_dir}/{output_name}_fastq_gz"
     qc:
@@ -65,9 +65,21 @@ results:
     modkit:
         dir: ?f"{results_dir}/modkit_{output_name}"
 
+input:
+    dorado: ?f"{input_dir}"
+    ?if this["jasmine"]:
+        jasmine: ?f"{input_dir}"
+        fibertools: ?this["results"]["jasmine"]
+    ?else:
+        fibertools: ?f"{input_dir}"
+
+    reference:
+        path: ?f"{resources_dir}/" + this["input_files"]["minimap2_reference_filename"]
+
 logs:
     install_dorado: ?f"{logs_dir}/install_dorado.out"
     dorado: ?f"{logs_dir}/dorado_{output_name}.out"
+    jasmine: ?f"{logs_dir}/jasmine_{output_name}.out"
     fibertools_predict: ?f"{logs_dir}/fibertools_predict_{output_name}.out"
     bam_to_fastq_gz: ?f"{logs_dir}/bam_to_fastq_gz{output_name}.out"
     sequali: ?f"{logs_dir}/sequali_{output_name}.out"
