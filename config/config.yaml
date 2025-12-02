@@ -64,6 +64,8 @@ results:
         filtered_dir: ?this["results"]["minimap2"]["dir"] + "_filtered"
     modkit:
         dir: ?f"{results_dir}/modkit_{output_name}"
+    tabix:
+        dir: ?f"{results_dir}/tabix_{output_name}"
 
 input:
     dorado: ?f"{input_dir}"
@@ -90,3 +92,4 @@ logs:
     minimap2: ?f"{logs_dir}/minimap2_{output_name}.out"
     filter_samtools: ?f"{logs_dir}/filter_samtools_{output_name}.out"
     modkit: ?f"{logs_dir}/modkit_{output_name}.out"
+    tabix: ?f"{logs_dir}/tabix_{output_name}.out"

@@ -15,7 +15,9 @@ rule all:
         # Mapping with Minimap2
         config["results"]["minimap2"]["filtered_dir"],
         # Modkit
-        config["results"]["modkit"]["dir"]
+        config["results"]["modkit"]["dir"],
+        # Tabix
+        config["results"]["tabix"]["dir"]
 
 # Modules
 if config["input_files"]["data"]["type"] == "ONT":
@@ -31,3 +33,4 @@ include: "rules/install_kraken2_db.smk"
 include: "rules/kraken2.smk"
 include: "rules/minimap2.smk"
 include: "rules/modkit.smk"
+include: "rules/tabix.smk"
