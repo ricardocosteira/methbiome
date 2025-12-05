@@ -10,10 +10,6 @@ input_files:
 
 output_name: test
 
-# Do we want to perform 5mC calling with Jasmine before 6mA calling with Fibertools?
-# This can be ignored if the data type is ONT
-jasmine: True # True or False
-
 tool_specific_params: # Parameters used by the tools themselves
     dorado:
         min_quality: 10
@@ -47,7 +43,6 @@ resources:
         archive_path: ?f"{resources_dir}/kraken2_db.tar.gz"
 
 results:
-    jasmine: ?f"{results_dir}/{output_name}_jasmine"
     dorado_intermediate_bam_path: ?f"{results_dir}/{output_name}.bam"
     bam_dir: ?f"{results_dir}/{output_name}_bam"
     fastq_gz_dir: ?f"{results_dir}/{output_name}_fastq_gz"
@@ -69,19 +64,13 @@ results:
 
 input:
     dorado: ?f"{input_dir}"
-    ?if this["jasmine"]:
-        jasmine: ?f"{input_dir}"
-        fibertools: ?this["results"]["jasmine"]
-    ?else:
-        fibertools: ?f"{input_dir}"
-
+    fibertools: ?f"{input_dir}"
     reference:
         path: ?f"{resources_dir}/" + this["input_files"]["minimap2_reference_filename"]
 
 logs:
     install_dorado: ?f"{logs_dir}/install_dorado.out"
     dorado: ?f"{logs_dir}/dorado_{output_name}.out"
-    jasmine: ?f"{logs_dir}/jasmine_{output_name}.out"
     fibertools_predict: ?f"{logs_dir}/fibertools_predict_{output_name}.out"
     bam_to_fastq_gz: ?f"{logs_dir}/bam_to_fastq_gz{output_name}.out"
     sequali: ?f"{logs_dir}/sequali_{output_name}.out"
