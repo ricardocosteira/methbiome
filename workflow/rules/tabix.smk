@@ -10,14 +10,11 @@ rule tabix:
     shell:
         """
         {{
-        for BED in '{input}'/*.bed; do
+        cp -R '{input}' '{output}'
+        for BED in '{output}'/*.bed; do
                 [ -e "$BED" ] || continue
-
-                filename_with_extension="$(basename "$BED")"
-                filename_without_extension="${{filename_with_extension%.*}}"
-
-                bgzip "$filename_with_extension"
-                tabix "$filename_without_extension.gz"
+                bgzip "$BED"
+                tabix "$BED.gz"
             done
         }} &> {log}
         """
