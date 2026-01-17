@@ -1,24 +1,6 @@
 # Import config file
 configfile: "config/config.yaml"
 
-rule all:
-    input:
-        # Basecalling dorado or fibertools
-        config["results"]["bam_dir"],
-        config["results"]["fastq_gz_dir"],
-        # Classification with kraken2
-        config["results"]["kraken2"]["dir"],
-        config["results"]["kraken2"]["combined_mpa_path"],
-        # Quality control with Sequali and MultiQC
-        config["results"]["qc"]["sequali"]["dir"],
-        config["results"]["qc"]["multi_qc_report_path"],
-        # Mapping with Minimap2
-        config["results"]["minimap2"]["filtered_dir"],
-        # Modkit
-        config["results"]["modkit"]["dir"],
-        # Tabix
-        config["results"]["tabix"]["dir"]
-
 # Modules
 if config["input_files"]["data"]["type"] == "ONT":
     include: "rules/install_dorado.smk"
@@ -31,4 +13,22 @@ include: "rules/install_kraken2_db.smk"
 include: "rules/kraken2.smk"
 include: "rules/minimap2.smk"
 include: "rules/modkit.smk"
-include: "rules/tabix.smk"
+
+outputs = [
+    config["results"]["bam_dir"],
+    config["results"]["fastq_gz_dir"],
+    config["results"]["kraken2"]["dir"],
+    config["results"]["kraken2"]["kraken2_mpa_path"],
+    config["results"]["qc"]["sequali"]["dir"],
+    config["results"]["qc"]["multi_qc_report_path"],
+    config["results"]["minimap2"]["filtered_dir"],
+    config["results"]["modkit"]["dir"]
+]
+
+if config["tabix"]:
+    outputs.append(config["results"]["tabix"]["dir"])
+    include: "rules/tabix.smk"
+
+rule all:
+    input:
+        outputs

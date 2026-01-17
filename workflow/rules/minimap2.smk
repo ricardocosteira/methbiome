@@ -43,6 +43,9 @@ rule filter_samtools:
         directory(config["results"]["minimap2"]["filtered_dir"])
     conda:
         "../envs/samtools.yaml"
+    params:
+        index_path=config["input"]["index"]["path"],
+        mapping_quality=config["tool_specific_params"]["minimap2"]["mapping_quality"]
     log:
         config["logs"]["filter_samtools"]
     shell:
@@ -55,17 +58,24 @@ rule filter_samtools:
 
                 filename_with_extension="$(basename "$sam")"
                 filename_without_extension="${{filename_with_extension%.*}}"
+                sort_bam="$filename_without_extension.sort.bam"
+                sort_bai="$filename_without_extension.sort.bai"
                 flagstat="$filename_without_extension.flagstat"
-                sort_bam="$filename_without_extension.mapq20.sort.bam"
-                sort_depth="$filename_without_extension.mapq20.sort.depth"
-                sort_coverage="$filename_without_extension.mapq20.sort.coverage"
-                sort_flagstat="$filename_without_extension.mapq20.sort.flagstat"
-                
-                samtools flagstat "$sam" > "{output}/$flagstat"
-                samtools view -h -q 20 -b -@ "$(nproc)" "$sam" | samtools sort -@ "$(nproc)" -o "{output}/$sort_bam"
-                samtools depth "{output}/$sort_bam" > "{output}/$sort_depth"
+                sort_flagstat="$filename_without_extension.sort.flagstat"
+                sort_coverage="$filename_without_extension.sort.coverage"
+
+                samtools_view_command='samtools view -h -q "{params.mapping_quality}" -b -@ "$(nproc)"'
+                if [ '{params.index_path}' != 'None' ]
+                then
+                    samtools_view_command+=' -t "{params.index_path}"'
+                fi
+                samtools_view_command+=' "$sam" | samtools sort -@ "$(nproc)" -o "{output}/$sort_bam"'
+
+                eval "$samtools_view_command"
+                samtools index -@ "$(nproc)" -o "{output}/$sort_bai" "{output}/$sort_bam"
+                samtools flagstat -@ "$(nproc)" "{output}/$sort_bam" > "{output}/$sort_flagstat"
                 samtools coverage "{output}/$sort_bam" > "{output}/$sort_coverage"
-                samtools flagstat "{output}/$sort_bam" > "{output}/$sort_flagstat"
+                
             done
         }} &> {log}
         """     

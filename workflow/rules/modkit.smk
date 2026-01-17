@@ -1,8 +1,12 @@
+my_output = directory(config["results"]["modkit"]["dir"])
+if config["tabix"]:
+    my_output = temp(my_output)
+
 rule modkit:
     input:
         config["results"]["minimap2"]["filtered_dir"]
     output:
-        directory(config["results"]["modkit"]["dir"])
+        my_output
     conda:
         "../envs/modkit.yaml"
     params:

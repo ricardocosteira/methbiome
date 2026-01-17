@@ -30,7 +30,7 @@ rule multiqc:
     conda:
         "../envs/multiqc.yaml"
     log:
-        config["logs"]["sequali"]
+        config["logs"]["multiqc"]
     shell:
         """
         {{

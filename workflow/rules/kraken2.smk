@@ -36,15 +36,15 @@ rule kraken2:
         }} &> {log}
         """
 
-rule combine_mpa:
+rule kraken2_mpa:
     input:
         config["results"]["kraken2"]["dir"],
     output:
-        config["results"]["kraken2"]["combined_mpa_path"]
+        config["results"]["kraken2"]["kraken2_mpa_path"]
     conda:
         "../envs/kraken2.yaml"
     log:
-        config["logs"]["combine_mpa"]
+        config["logs"]["kraken2_mpa"]
     shell:
         """
         {{
