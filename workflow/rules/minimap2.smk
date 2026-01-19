@@ -70,7 +70,16 @@ rule filter_samtools:
                     samtools_view_command+=' -t "{params.index_path}"'
                 fi
                 samtools_view_command+=' "$sam" | samtools sort -@ "$(nproc)" -o "{output}/$sort_bam"'
-
+                
+                samtools_flagstat_command='samtools flagstat -@ "$(nproc)"'
+                if [ '{params.index_path}' != 'None' ]
+                then
+                    samtools_flagstat_command+=' --input-fmt-option "{params.index_path}"'
+                fi
+                samtools_flagstat_command+=' "{output}/$sam" > "{output}/$flagstat"'
+                
+                eval $samtools_flagstat_command
+                # Change order
                 eval "$samtools_view_command"
                 samtools index -@ "$(nproc)" -o "{output}/$sort_bai" "{output}/$sort_bam"
                 samtools flagstat -@ "$(nproc)" "{output}/$sort_bam" > "{output}/$sort_flagstat"
