@@ -2,5 +2,5 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - ont-modkit
-  - samtools
+  - ont-modkit=0.5.0
+  - samtools=1.23

@@ -10,7 +10,7 @@ rule install_dorado:
     shell:
         """
         {{
-            link="$(python3 workflow/scripts/get_latest_dorado_link.py)"
+            link='https://cdn.oxfordnanoportal.com/software/analysis/dorado-1.3.1-linux-x64.tar.gz'
             wget -q -O '{params.dorado_archive_path}' "$link"
             
             mkdir -p '{output}'
