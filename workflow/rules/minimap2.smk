@@ -74,7 +74,7 @@ rule filter_samtools:
                 samtools_flagstat_command='samtools flagstat -@ "$(nproc)"'
                 if [ '{params.index_path}' != 'None' ]
                 then
-                    samtools_flagstat_command+=' --input-fmt-option "{params.index_path}"'
+                    samtools_flagstat_command+=' --input-fmt-option reference="{params.index_path}"'
                 fi
                 samtools_flagstat_command+=' "{output}/$sam" > "{output}/$flagstat"'
                 

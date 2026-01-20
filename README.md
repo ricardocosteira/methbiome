@@ -52,7 +52,7 @@ git clone https://github.com/ricardocosteira/methbiome
 Open a tmux session so that snakemake can continue running in the background. Then, run the following command.
 
 ```bash
-snakemake --profile environment
+./run.sh
 ```
 
 #### 2. Execution of part of the pipeline
