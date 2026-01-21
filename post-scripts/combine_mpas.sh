@@ -7,16 +7,15 @@ source "$(dirname $0)/.common.sh"
 if [ ! -d "$ENV_PATH" ]; then
     echo "Creating new environment at: $ENV_PATH"
     mkdir -p "$ENV_PATH"
-    conda create --prefix "$ENV_PATH" -c bioconda krakentools=1.2.1 -y
+    conda create --prefix "$ENV_PATH" -c conda-forge -c bioconda krakentools=1.2.1 -y
 fi
-
-echo "Activating environment: $ENV_PATH"
-conda init
-conda activatae "$ENV_PATH"
 
 echo 'Combining reports'
 
-cd "$DEST_DIR"
-combine_mpa.py -i ./*.mpa -o 'combined.kreports.mpa'
+conda run -p "$ENV_PATH" bash -c "
+    set -euo pipefail
+    cd "$DEST_DIR"
+    combine_mpa.py -i ./*.mpa -o 'combined.kreports.mpa'
+"
 
 echo "Done!"

@@ -7,7 +7,7 @@ source "$(dirname $0)/.common.sh"
 if [ ! -d "$ENV_PATH" ]; then
     echo "Creating new environment at: $ENV_PATH"
     mkdir -p "$ENV_PATH"
-    conda create --prefix "$ENV_PATH" -c bioconda multiqc=1.33 -y
+    conda create --prefix "$ENV_PATH" -c conda-forge -c bioconda multiqc=1.33 -y
 fi
 
 echo 'Combining reports'
