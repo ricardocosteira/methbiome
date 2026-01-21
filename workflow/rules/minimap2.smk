@@ -76,7 +76,7 @@ rule filter_samtools:
                 then
                     samtools_flagstat_command+=' --input-fmt-option reference="{params.index_path}"'
                 fi
-                samtools_flagstat_command+=' "{output}/$sam" > "{output}/$flagstat"'
+                samtools_flagstat_command+=' $sam" > "{output}/$flagstat"'
                 
                 eval $samtools_flagstat_command
                 # Change order
