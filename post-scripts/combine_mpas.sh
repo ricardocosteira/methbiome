@@ -7,11 +7,11 @@ source "$(dirname $0)/.common.sh"
 if [ ! -d "$ENV_PATH" ]; then
     echo "Creating new environment at: $ENV_PATH"
     mkdir -p "$ENV_PATH"
-    conda create --prefix "$ENV_PATH" krakentools=1.2.1 -y
+    conda create --prefix "$ENV_PATH" -c bioconda krakentools=1.2.1 -y
 fi
 
 echo "Activating environment: $ENV_PATH"
-conda activate "$ENV_PATH"
+conda activatae "$ENV_PATH"
 
 echo 'Combining reports'
 
