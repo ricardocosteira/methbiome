@@ -78,10 +78,9 @@ rule filter_samtools:
                 fi
                 samtools_flagstat_command+=' "$sam" > "{output}/$flagstat"'
                 
-                eval $samtools_flagstat_command
-                # Change order
                 eval "$samtools_view_command"
                 samtools index -@ "$(nproc)" -o "{output}/$sort_bai" "{output}/$sort_bam"
+                eval "$samtools_flagstat_command"
                 samtools flagstat -@ "$(nproc)" "{output}/$sort_bam" > "{output}/$sort_flagstat"
                 samtools coverage "{output}/$sort_bam" > "{output}/$sort_coverage"
                 
