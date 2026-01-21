@@ -1,5 +1,5 @@
 #!/bin/bash
-DEST_DIR="$(dirname $0)/combined_mpas"
+DEST_DIR="$(dirname $0)/combined_mpas_$(date +%s)" # Add Unix epoch to make unique
 ENV_PATH="$(dirname $0)/.conda/krakentools"
 
 source "$(dirname $0)/.common.sh"
@@ -11,6 +11,7 @@ if [ ! -d "$ENV_PATH" ]; then
 fi
 
 echo "Activating environment: $ENV_PATH"
+conda init
 conda activatae "$ENV_PATH"
 
 echo 'Combining reports'
