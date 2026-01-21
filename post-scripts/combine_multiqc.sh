@@ -13,6 +13,6 @@ fi
 echo 'Combining reports'
 
 cd "$DEST_DIR"
-conda run -n "$ENV_PATH" multiqc .
+conda run -p "$ENV_PATH" multiqc .
 
 echo "Done!"
