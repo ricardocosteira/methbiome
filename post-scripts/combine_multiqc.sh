@@ -12,7 +12,10 @@ fi
 
 echo 'Combining reports'
 
-cd "$DEST_DIR"
-conda run -p "$ENV_PATH" multiqc .
+conda run -p "$ENV_PATH" bash -c "
+    set -euo pipefail
+    cd "$DEST_DIR"
+    multiqc .
+"
 
 echo "Done!"
