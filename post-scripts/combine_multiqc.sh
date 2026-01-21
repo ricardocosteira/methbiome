@@ -10,12 +10,9 @@ if [ ! -d "$ENV_PATH" ]; then
     conda create --prefix "$ENV_PATH" -c bioconda multiqc=1.33 -y
 fi
 
-echo "Activating environment: $ENV_PATH"
-conda activate "$ENV_PATH"
-
 echo 'Combining reports'
 
 cd "$DEST_DIR"
-multiqc .
+conda run -n "$ENV_PATH" multiqc .
 
 echo "Done!"
