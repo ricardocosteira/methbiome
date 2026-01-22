@@ -60,4 +60,4 @@ set-resources:
         slurm_partition: cpu
         tasks: 60
         mem: 64000
-        runtime: 240
+        runtime: 1440
