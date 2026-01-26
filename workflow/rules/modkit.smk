@@ -25,7 +25,7 @@ rule modkit:
                 input_bam="$aBAM"
 
                 if [ '{params.data_type}' == 'PacBio' ]; then
-                    explicit_bam="${input_bam}_explicit.bam"
+                    explicit_bam="${{input_bam}}_explicit.bam"
                     modkit modbam update-tags -t "$(nproc)" -m explicit $input_bam "$explicit_bam"
 
                     input_bam="$explicit_bam"
