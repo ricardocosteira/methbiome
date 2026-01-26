@@ -16,24 +16,24 @@ rule modkit:
         config["logs"]["modkit"]
     shell:
         """
-        {{
-            modkit_command='modkit pileup -t "$(nproc)" --filter-threshold '{params.minimum_methylation_likelihood}' --header'
-
-            if [ '{params.data_type}' == 'PacBio' ]; then
-                modkit_command+=' --force-allow-implicit' # Flag needed when input data is PacBio
-            fi
-
-            modkit_command+=' "$aBAM" "{output}/$filename_without_extension.bed"'
-            
+        {{            
             for aBAM in '{input}'/*.sort.bam; do
                 [ -e "$aBAM" ] || continue
 
                 filename_with_extension="$(basename "$aBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
+                input_bam="$aBAM"
 
-                samtools index "$aBAM"
+                if [ '{params.data_type}' == 'PacBio' ]; then
+                    explicit_bam="$input_bam_explicit.bam"
+                    modkit modbam update-tags -t "$(nproc)" -m explicit $input_bam "$explicit_bam"
 
-                eval "$modkit_command"
+                    input_bam="$explicit_bam"
+                fi
+
+                samtools index "$input_bam"
+
+                modkit pileup -t "$(nproc)" --filter-threshold '{params.minimum_methylation_likelihood}' --header "$input_bam" "{output}/$filename_without_extension.bed"
             done
         }} &> {log}
         """
