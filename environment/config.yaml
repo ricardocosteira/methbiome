@@ -18,7 +18,7 @@ default-resources:
     tasks: 1
     mem: 1G
     runtime: 1440 # Runtime is in minutes (= 24 hours)
-    slurm_extra: '--mail-type=ALL --mail-user=example@email.com'
+    ## slurm_extra: '--mail-type=ALL --mail-user=example@email.com' # Remove leading '## ' and put your email address for job status email notifications
 
 # In set-resources, the special_rule overriding the defaults where specified.
 
@@ -27,19 +27,19 @@ set-resources:
         slurm_partition: gpu
         tasks: 0 # A zero value disables the --ntasks-per-cpu flag, we need that to fix 'SLURM_TRES_PER_TASK is mutually exclusive with --ntasks-per-gpu and SLURM_NTASKS_PER_GPU'
         gres: 'gpu:1'
-        mem: 600G
+        mem: 128G
         runtime: 2880 # Runtime is in minutes (= 48 hours)
 
     fibertools_predict:
         slurm_partition: cpu
         tasks: 60
-        mem: 600G
+        mem: 128G
         runtime: 2880
 
     sequali:
         slurm_partition: cpu
         tasks: 60
-        mem: 200G
+        mem: 128G
         runtime: 2880
 
     multiqc:
@@ -51,7 +51,7 @@ set-resources:
     kraken2:
         slurm_partition: cpu
         tasks: 60
-        mem: 300G
+        mem: 128G
         runtime: 2880
 
     kraken2_mpa:
@@ -69,18 +69,20 @@ set-resources:
     minimap2:
         slurm_partition: cpu
         tasks: 60
-        mem: 1000G
+        mem: 128G
         runtime: 2880
 
     filter_samtools:
         slurm_partition: cpu
         tasks: 60
+        mem: 128G
+        runtime: 2880
 
     modkit:
         slurm_partition: cpu
         tasks: 60
-        mem: 64G
-        runtime: 1440
+        mem: 128G
+        runtime: 2880
 
     tabix:
         slurm_partition: cpu

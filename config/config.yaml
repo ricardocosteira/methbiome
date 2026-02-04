@@ -17,7 +17,7 @@ output_name: test
 tool_specific_params: # Parameters used by the tools themselves
     dorado:
         min_quality: 10
-        trim: --trim all # E.g. --no-trim, --trim all. Use --no-trim if demultiplexing samples
+        trim: --trim all # E.g. --no-trim, --trim all. Use --no-trim if demultiplexing samples
         methylation_model: hac,4mC_5mC,6mA
         demultiplexing: False # True or False
         mux_barcode_kit: SQK-NBD114-24 # Can be empty if demultiplex is False
