@@ -16,6 +16,8 @@ slurm-logdir: logs/cluster
 default-resources:
     slurm_partition: cpu
     tasks: 1
+    mem: 1G
+    runtime: 1440 # Runtime is in minutes (= 24 hours)
     slurm_extra: '--mail-type=ALL --mail-user=example@email.com'
 
 # In set-resources, the special_rule overriding the defaults where specified.
