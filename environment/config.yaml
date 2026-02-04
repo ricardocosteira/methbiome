@@ -25,31 +25,49 @@ set-resources:
         slurm_partition: gpu
         tasks: 0 # A zero value disables the --ntasks-per-cpu flag, we need that to fix 'SLURM_TRES_PER_TASK is mutually exclusive with --ntasks-per-gpu and SLURM_NTASKS_PER_GPU'
         gres: 'gpu:1'
-        mem: 64000
+        mem: 600G
         runtime: 2880 # Runtime is in minutes (= 48 hours)
 
     fibertools_predict:
         slurm_partition: cpu
         tasks: 60
-        mem: 64000
+        mem: 600G
         runtime: 2880
 
     sequali:
         slurm_partition: cpu
         tasks: 60
-        mem: 64000
-        runtime: 240 # 4 hours
+        mem: 200G
+        runtime: 2880
+
+    multiqc:
+        slurm_partition: cpu
+        tasks: 60
+        mem: 128G
+        runtime: 2880
 
     kraken2:
         slurm_partition: cpu
         tasks: 60
-        mem: 64000
+        mem: 300G
+        runtime: 2880
+
+    kraken2_mpa:
+        slurm_partition: cpu
+        tasks: 60
+        mem: 128G
+        runtime: 2880
+
+    bam_to_fastq_gz:
+        slurm_partition: cpu
+        tasks: 60
+        mem: 128G
         runtime: 2880
 
     minimap2:
         slurm_partition: cpu
         tasks: 60
-        mem: 64000
+        mem: 1000G
         runtime: 2880
 
     filter_samtools:
@@ -59,5 +77,11 @@ set-resources:
     modkit:
         slurm_partition: cpu
         tasks: 60
-        mem: 64000
+        mem: 64G
         runtime: 1440
+
+    tabix:
+        slurm_partition: cpu
+        tasks: 60
+        mem: 128G
+        runtime: 2880
