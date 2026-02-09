@@ -16,7 +16,7 @@ slurm-logdir: logs/cluster
 default-resources:
     slurm_partition: cpu
     tasks: 1
-    mem: 1G
+    mem: 128G
     runtime: 1440 # Runtime is in minutes (= 24 hours)
     ## slurm_extra: '--mail-type=ALL --mail-user=example@email.com' # Remove leading '## ' and put your email address for job status email notifications
 
