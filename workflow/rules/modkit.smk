@@ -28,6 +28,7 @@ rule modkit:
                     explicit_bam="${{input_bam}}_explicit.bam"
                     modkit modbam update-tags -t "$(nproc)" -m explicit $input_bam "$explicit_bam"
 
+                    rm -f "$input_bam" "${{input_bam}}.bai"
                     input_bam="$explicit_bam"
                 fi
 
