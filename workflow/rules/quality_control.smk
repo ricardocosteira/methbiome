@@ -21,19 +21,3 @@ rule sequali:
             done
         }} &> {log}
         """
-
-rule multiqc:
-    input:
-        config["results"]["qc"]["sequali"]["dir"]
-    output:
-        config["results"]["qc"]["multi_qc_report_path"]
-    conda:
-        "../envs/multiqc.yaml"
-    log:
-        config["logs"]["multiqc"]
-    shell:
-        """
-        {{
-            multiqc '{input}' --force --filename '{output}'
-        }} &> {log}
-        """
