@@ -40,7 +40,7 @@ rule dorado:
                     --kit-name '{params.mux_barcode_kit}' \
                     --threads "$(nproc)" \
                     '{params.intermediate_bam_path}'
-                find "$temp_dir" -type f -regex '*.bam' -exec mv {{}} {output} \;
+                find "$temp_dir" -type f -regex '*.bam' -exec mv {{}} {output} \\;
                 rm -rf "$temp_dir"
             else
                 mv '{params.intermediate_bam_path}' '{output}'
