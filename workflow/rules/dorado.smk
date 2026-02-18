@@ -33,15 +33,16 @@ rule dorado:
             mkdir -p '{output}'
 
             if [ '{params.demultiplexing}' == 'True' ]; then
-                temp_dir='dorado_temp'
                 '{params.dorado_path}' demux \
                     --verbose \
                     --output-dir "$temp_dir" \
                     --kit-name '{params.mux_barcode_kit}' \
                     --threads "$(nproc)" \
                     '{params.intermediate_bam_path}'
-                find "$temp_dir" -type f -regex '*.bam' -exec mv {{}} '{output}' \\;
-                rm -rf "$temp_dir"
+                temp_dir='dorado_temp'
+                mkdir "$temp_dir"
+                find '{output}' -type f -regex '*.bam' -exec mv {{}} "$temp_dir" \\;
+                mv "$temp_dir" '{output}'
             else
                 mv '{params.intermediate_bam_path}' '{output}'
             fi
