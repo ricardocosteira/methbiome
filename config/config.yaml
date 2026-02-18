@@ -51,6 +51,7 @@ resources:
 results:
     dorado_intermediate_bam_path: ?f"{results_dir}/{output_name}.bam"
     bam_dir: ?f"{results_dir}/{output_name}_bam"
+    dorado_temp_dir: ?f"{results_dir}/{output_name}_bam_temp"
     fastq_gz_dir: ?f"{results_dir}/{output_name}_fastq_gz"
     qc:
         sequali:

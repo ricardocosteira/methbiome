@@ -11,7 +11,8 @@ rule dorado:
         trim=config["tool_specific_params"]["dorado"]["trim"],
         methylation_model=config["tool_specific_params"]["dorado"]["methylation_model"],
         demultiplexing=config["tool_specific_params"]["dorado"]["demultiplexing"],
-        mux_barcode_kit=config["tool_specific_params"]["dorado"]["mux_barcode_kit"]
+        mux_barcode_kit=config["tool_specific_params"]["dorado"]["mux_barcode_kit"],
+        dorado_temp_dir=config["results"]["dorado_temp_dir"]
     log:
         config["logs"]["dorado"]
     shell:
@@ -33,16 +34,15 @@ rule dorado:
             mkdir -p '{output}'
 
             if [ '{params.demultiplexing}' == 'True' ]; then
+                mkdir -p '{params.dorado_temp_dir}'
                 '{params.dorado_path}' demux \
                     --verbose \
-                    --output-dir "$temp_dir" \
+                    --output-dir '{params.dorado_temp_dir}' \
                     --kit-name '{params.mux_barcode_kit}' \
                     --threads "$(nproc)" \
                     '{params.intermediate_bam_path}'
-                temp_dir='dorado_temp'
-                mkdir "$temp_dir"
-                find '{output}' -type f -regex '*.bam' -exec mv {{}} "$temp_dir" \\;
-                mv "$temp_dir" '{output}'
+                find '{params.dorado_temp_dir}' -type f -regex '*.bam' -exec mv {{}} '{output}' \\;
+                rm -rf '{params.dorado_temp_dir}'
             else
                 mv '{params.intermediate_bam_path}' '{output}'
             fi
