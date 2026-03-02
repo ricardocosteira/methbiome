@@ -21,6 +21,7 @@ tool_specific_params: # Parameters used by the tools themselves
         methylation_model: hac,4mC_5mC,6mA
         demultiplexing: False # True or False
         mux_barcode_kit: SQK-NBD114-24 # Can be empty if demultiplex is False
+        valid_file_size: 1G # E.g. 1G, 500M. When demultiplexing is true, we only want to carry barcodes with actual data downstream. So only files greater than this parameter will be processed by subsequent rules.
     minimap2:
         mapping_quality: 20
     modkit:
@@ -51,7 +52,7 @@ resources:
 results:
     dorado_intermediate_bam_path: ?f"{results_dir}/{output_name}.bam"
     bam_dir: ?f"{results_dir}/{output_name}_bam"
-    dorado_temp_dir: ?f"{results_dir}/{output_name}_bam_temp"
+    dorado_invalid_dir: ?f"{results_dir}/{output_name}_bam_invalid"
     fastq_gz_dir: ?f"{results_dir}/{output_name}_fastq_gz"
     qc:
         sequali:
