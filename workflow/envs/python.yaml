@@ -1,6 +1,6 @@
 channels:
   - defaults
 dependencies:
-  - python
-  - beautifulsoup4
-  - requests
+  - python=3.14.0
+  - beautifulsoup4=4.14.2
+  - requests=2.32.5
