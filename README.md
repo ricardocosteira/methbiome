@@ -22,9 +22,9 @@
     - [C. Pipeline Execution](#c-pipeline-execution)
       - [1. Execution of the Entire Pipeline](#1-execution-of-the-entire-pipeline)
       - [2. Execution of Part of the Pipeline](#2-execution-of-part-of-the-pipeline)
-    - [3. Post-scripts](#3-post-scripts)
-      - [a. Combine Sequali Reports into MultiQC](#a-combine-sequali-reports-into-multiqc)
-      - [b. Combine MPA reports](#b-combine-mpa-reports)
+    - [D. Post-scripts](#d-post-scripts)
+      - [1. Combine Sequali Reports into MultiQC](#1-combine-sequali-reports-into-multiqc)
+      - [2. Combine MPA reports](#2-combine-mpa-reports)
 
 
 ## I. Environment Dependencies
@@ -90,7 +90,7 @@ This will run the pipeline up to the rule named `rule_name`, meaning that all ru
 snakemake --profile environment rule_name
 ```
 
-### 3. Post-scripts
+### D. Post-scripts
 
 This is useful if you want to combine data from multiple samples.
 
@@ -100,7 +100,7 @@ Make sure you are in the `post-scripts` directory.
 cd post-scripts
 ```
 
-#### a. Combine Sequali Reports into MultiQC
+#### 1. Combine Sequali Reports into MultiQC
 
 Run the following command, where `<directory1>`, `<directory2>`, ... are directories containing Sequali reports.
 
@@ -108,7 +108,7 @@ Run the following command, where `<directory1>`, `<directory2>`, ... are directo
 ./combine_sequali_into_multiqc.sh <directory1> <directory2> <directoryn>
 ```
 
-#### b. Combine MPA reports
+#### 2. Combine MPA reports
 
 Run the following command, where `<directory1>`, `<directory2>`, ... are directories containing kraken2 MPA reports.
 
