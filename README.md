@@ -1,22 +1,47 @@
 # methbiome
 
-Bioinformatic pipeline for the DNA methylation analysis of microbiomes. Reads in ONT and PacBio-generated data.
+![methbiome diagrams](assets/methbiome_diagrams_github.jpg)
 
-## I. Environment dependencies
+<center>Bioinformatic pipeline for the DNA methylation analysis of microbiomes. Reads in ONT and PacBio-generated data.</center>
 
-### A. SLURM profile
+## Table of Contents
 
-This pipeline was built for execution with SLURM but can be easily adapted to other environments. To do so, you edit [`environment/config.yaml`](environment/config.yaml).
+- [methbiome](#methbiome)
+  - [Table of Contents](#table-of-contents)
+  - [I. Environment Dependencies](#i-environment-dependencies)
+    - [A. SLURM Profile](#a-slurm-profile)
+    - [B. CUDA](#b-cuda)
+    - [C. Dorado for Linux x64](#c-dorado-for-linux-x64)
+  - [II. Set Up](#ii-set-up)
+    - [A. Miniforge](#a-miniforge)
+    - [B. Snakemake](#b-snakemake)
+    - [C. Slurm Plugin](#c-slurm-plugin)
+  - [III. Usage](#iii-usage)
+    - [A. Download methbiome](#a-download-methbiome)
+    - [B. Configuration](#b-configuration)
+    - [C. Pipeline Execution](#c-pipeline-execution)
+      - [1. Execution of the Entire Pipeline](#1-execution-of-the-entire-pipeline)
+      - [2. Execution of Part of the Pipeline](#2-execution-of-part-of-the-pipeline)
+    - [3. Post-scripts](#3-post-scripts)
+      - [a. Combine Sequali Reports into MultiQC](#a-combine-sequali-reports-into-multiqc)
+      - [b. Combine MPA reports](#b-combine-mpa-reports)
+
+
+## I. Environment Dependencies
+
+### A. SLURM Profile
+
+This pipeline was built for execution with SLURM but can be easily adapted to other environments. To do so, you can edit [`environment/config.yaml`](environment/config.yaml).
 
 ### B. CUDA
 
-Basecalling with dorado relies on CUDA, which is loaded by the command `module load cuda`. You might need to change this command.
+Basecalling with Dorado relies on CUDA, which is loaded by the command `module load cuda`. You might need to change this command.
 
 ### C. Dorado for Linux x64
 
-In this project, the dorado version we use is for Linux x64. For other environments, change the download link in the `install_dorado` rule.
+In this project, the Dorado version we use is for Linux x64. For other environments, change the download link in the `install_dorado` rule.
 
-## II. Set up
+## II. Set Up
 
 ### A. Miniforge
 
@@ -24,9 +49,9 @@ Install [miniforge](https://conda-forge.org/download).
 
 ### B. Snakemake
 
-See [snakemake installation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
+See [Snakemake installation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
-### C. Slurm plugin
+### C. Slurm Plugin
 
 ```bash
 pip install snakemake-executor-plugin-slurm
@@ -45,19 +70,19 @@ git clone https://github.com/ricardocosteira/methbiome
 - Place the ONT or PacBio files in a subdirectory of `resources`. Please avoid naming it with spaces and special characters (other than '-' and '_').
 - Set parameters in [`config/config.yaml`](config/config.yaml) and resources in [`environment/config.yaml`](environment/config.yaml).
 
-### C. Pipeline execution
+### C. Pipeline Execution
 
-#### 1. Execution of the entire pipeline
+#### 1. Execution of the Entire Pipeline
 
-Open a tmux session so that snakemake can continue running in the background. Then, run the following command.
+Open a tmux session so that Snakemake can continue running in the background. Then, run the following command.
 
 ```bash
 ./run.sh
 ```
 
-#### 2. Execution of part of the pipeline
+#### 2. Execution of Part of the Pipeline
 
-Open a tmux session so that snakemake can continue running in the background. Then, replace `rule_name` in the following command and run it. 
+Open a tmux session so that Snakemake can continue running in the background. Then, replace `rule_name` in the following command and run it.
 
 This will run the pipeline up to the rule named `rule_name`, meaning that all rules on which `rule_name` depends are also executed.
 
@@ -75,12 +100,12 @@ Make sure you are in the `post-scripts` directory.
 cd post-scripts
 ```
 
-#### a. Combine MultiQC
+#### a. Combine Sequali Reports into MultiQC
 
-Run the following command, where `<directory1>`, `<directory2>`, ... are directories containing MultiQC outputs.
+Run the following command, where `<directory1>`, `<directory2>`, ... are directories containing Sequali reports.
 
 ```bash
-./combine_multiqc.sh <directory1> <directory2> <directoryn>
+./combine_sequali_into_multiqc.sh <directory1> <directory2> <directoryn>
 ```
 
 #### b. Combine MPA reports
