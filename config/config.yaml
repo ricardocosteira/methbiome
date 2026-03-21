@@ -17,10 +17,11 @@ output_name: test
 tool_specific_params: # Parameters used by the tools themselves
     dorado:
         min_quality: 10
-        trim: --trim all # E.g. --no-trim, --trim all
+        trim: --trim all # E.g. --no-trim, --trim all. Use --no-trim if demultiplexing samples
         methylation_model: hac,4mC_5mC,6mA
         demultiplexing: False # True or False
         mux_barcode_kit: SQK-NBD114-24 # Can be empty if demultiplex is False
+        valid_file_size: 1G # E.g. 1G, 500M. When demultiplexing is true, we only want to carry barcodes with actual data downstream. So only files greater than this parameter will be processed by subsequent rules.
     minimap2:
         mapping_quality: 20
     modkit:
@@ -51,14 +52,13 @@ resources:
 results:
     dorado_intermediate_bam_path: ?f"{results_dir}/{output_name}.bam"
     bam_dir: ?f"{results_dir}/{output_name}_bam"
+    dorado_invalid_dir: ?f"{results_dir}/{output_name}_bam_invalid"
     fastq_gz_dir: ?f"{results_dir}/{output_name}_fastq_gz"
     qc:
         sequali:
             dir: ?f"{results_dir}/sequali_{output_name}"
-        multi_qc_report_path: ?f"{results_dir}/multiqc_report_{output_name}.html"
     kraken2:
         dir: ?f"{results_dir}/kraken2_{output_name}"
-        kraken2_mpa_path: ?f"{results_dir}/{output_name}_Pilot.kreports.mpa"
     minimap2:
         dir: ?f"{results_dir}/minimap2_{output_name}_" + this["minimap2_reference_basename"]
         temp_dir: ?this["results"]["minimap2"]["dir"] + "_temp"
@@ -85,10 +85,8 @@ logs:
     fibertools_predict: ?f"{logs_dir}/fibertools_predict_{output_name}.out"
     bam_to_fastq_gz: ?f"{logs_dir}/bam_to_fastq_gz{output_name}.out"
     sequali: ?f"{logs_dir}/sequali_{output_name}.out"
-    multiqc: ?f"{logs_dir}/multiqc_{output_name}.out"
     install_kraken2_db: ?f"{logs_dir}/install_kraken2_db.out"
     kraken2: ?f"{logs_dir}/kraken2_{output_name}.out"
-    kraken2_mpa: ?f"{logs_dir}/kraken2_mpa_{output_name}.out"
     minimap2: ?f"{logs_dir}/minimap2_{output_name}.out"
     filter_samtools: ?f"{logs_dir}/filter_samtools_{output_name}.out"
     modkit: ?f"{logs_dir}/modkit_{output_name}.out"

@@ -18,9 +18,7 @@ outputs = [
     config["results"]["bam_dir"],
     config["results"]["fastq_gz_dir"],
     config["results"]["kraken2"]["dir"],
-    config["results"]["kraken2"]["kraken2_mpa_path"],
     config["results"]["qc"]["sequali"]["dir"],
-    config["results"]["qc"]["multi_qc_report_path"],
     config["results"]["minimap2"]["filtered_dir"],
     config["results"]["modkit"]["dir"]
 ]

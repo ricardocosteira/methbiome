@@ -52,7 +52,7 @@ git clone https://github.com/ricardocosteira/methbiome
 Open a tmux session so that snakemake can continue running in the background. Then, run the following command.
 
 ```bash
-snakemake --profile environment
+./run.sh
 ```
 
 #### 2. Execution of part of the pipeline
@@ -63,4 +63,30 @@ This will run the pipeline up to the rule named `rule_name`, meaning that all ru
 
 ```bash
 snakemake --profile environment rule_name
+```
+
+### 3. Post-scripts
+
+This is useful if you want to combine data from multiple samples.
+
+Make sure you are in the `post-scripts` directory.
+
+```bash
+cd post-scripts
+```
+
+#### a. Combine MultiQC
+
+Run the following command, where `<directory1>`, `<directory2>`, ... are directories containing MultiQC outputs.
+
+```bash
+./combine_multiqc.sh <directory1> <directory2> <directoryn>
+```
+
+#### b. Combine MPA reports
+
+Run the following command, where `<directory1>`, `<directory2>`, ... are directories containing kraken2 MPA reports.
+
+```bash
+./combine_mpas.sh <directory1> <directory2> <directoryn>
 ```

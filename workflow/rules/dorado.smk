@@ -11,7 +11,9 @@ rule dorado:
         trim=config["tool_specific_params"]["dorado"]["trim"],
         methylation_model=config["tool_specific_params"]["dorado"]["methylation_model"],
         demultiplexing=config["tool_specific_params"]["dorado"]["demultiplexing"],
-        mux_barcode_kit=config["tool_specific_params"]["dorado"]["mux_barcode_kit"]
+        mux_barcode_kit=config["tool_specific_params"]["dorado"]["mux_barcode_kit"],
+        dorado_invalid_dir=config["results"]["dorado_invalid_dir"],
+        valid_file_size=config["tool_specific_params"]["dorado"]["valid_file_size"]
     log:
         config["logs"]["dorado"]
     shell:
@@ -33,12 +35,14 @@ rule dorado:
             mkdir -p '{output}'
 
             if [ '{params.demultiplexing}' == 'True' ]; then
+                mkdir -p '{params.dorado_invalid_dir}'
                 '{params.dorado_path}' demux \
                     --verbose \
-                    --output-dir '{output}' \
+                    --output-dir '{params.dorado_invalid_dir}' \
                     --kit-name '{params.mux_barcode_kit}' \
                     --threads "$(nproc)" \
                     '{params.intermediate_bam_path}'
+                find '{params.dorado_invalid_dir}' -type f -name '*.bam' -not -name '*unclassified*.bam'  -size +'{params.valid_file_size}' -exec mv {{}} '{output}' \\;
             else
                 mv '{params.intermediate_bam_path}' '{output}'
             fi

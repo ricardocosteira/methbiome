@@ -18,7 +18,7 @@ rule bam_to_fastq_gz:
                 filename_with_extension="$(basename "$uBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
                 
-                samtools fastq "$uBAM" | gzip > "{output}/$filename_without_extension.fastq.gz"
+                samtools fastq -@ "$(nproc)" "$uBAM" | gzip > "{output}/$filename_without_extension.fastq.gz"
             done
         }} &> {log}
         """
