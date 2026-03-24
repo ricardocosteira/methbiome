@@ -1,8 +1,12 @@
 # methbiome
 
+
 <center>Bioinformatic pipeline for the DNA methylation analysis of microbiomes. Reads in ONT and PacBio-generated data.</center>
 
+
+
 ![methbiome diagrams](assets/methbiome_diagrams_github.jpg)
+
 
 
 ## Table of Contents
