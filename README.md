@@ -118,3 +118,8 @@ Run the following command, where `<directory1>`, `<directory2>`, ... are directo
 ```bash
 ./combine_mpas.sh <directory1> <directory2> <directoryn>
 ```
+
+<br>
+
+The pipeline was tested using publicly available data for the ZymoBIOMICS D6323 fecal microbiome standard. ONT POD5s available at https://epi2me.nanoporetech.com/zymo_fecal_2025.05/. PacBio BAMs available at https://www.pacb.com/connect/datasets/.
+
