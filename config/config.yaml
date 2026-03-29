@@ -4,15 +4,15 @@ __use_yte__: true # YTE: YAML template engine see https://yte-template-engine.gi
 
 input_files:
     data:
-        dir: test # Input directory in resources containing either ONT POD5 or PacBio BAM
+        dir: data # Input directory in resources containing either ONT POD5 or PacBio BAM
         type: ONT # ONT or PacBio
     minimap2:
-        reference_filename: B_fragillis_OB_EAV1_11_D6_FAA.fasta # File should be in resources directory
+        reference_filename: reference.fasta # File should be in resources directory
         index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
 
 tabix: True # Run tabix? True or False
 
-output_name: test
+output_name: sample1
 
 tool_specific_params: # Parameters used by the tools themselves
     dorado:
@@ -27,7 +27,7 @@ tool_specific_params: # Parameters used by the tools themselves
     modkit:
         minimum_methylation_likelihood: 0.8 # filter-threshold in modkit
 
-############################## The following is generate from the above should NOT to be modified ##############################
+############################## The following is generated from the above should NOT to be modified ##############################
 
 minimap2_reference_basename: ?this["input_files"]["minimap2"]["reference_filename"].split('.')[0]
 
