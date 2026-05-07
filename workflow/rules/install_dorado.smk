@@ -2,7 +2,7 @@ rule install_dorado:
     output:
         directory(config["resources"]["dorado"]["dir"])
     conda:
-        "../envs/python.yaml"
+        "../envs/main.yaml"
     params:
         dorado_archive_path=config["resources"]["dorado"]["archive_path"]
     log:

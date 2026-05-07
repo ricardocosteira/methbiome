@@ -5,7 +5,7 @@ rule kraken2:
     output:
         directory(config["results"]["kraken2"]["dir"]),
     conda:
-        "../envs/kraken2.yaml"
+        "../envs/main.yaml"
     params:
         kraken2_db_dir=config["resources"]["kraken2_db"]["dir"]
     log:

@@ -4,7 +4,7 @@ rule bam_to_fastq_gz:
     output:
         directory(config["results"]["fastq_gz_dir"])
     conda:
-        "../envs/samtools.yaml"
+        "../envs/main.yaml"
     log:
         config["logs"]["bam_to_fastq_gz"]
     shell:

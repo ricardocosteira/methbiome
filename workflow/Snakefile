@@ -8,7 +8,7 @@ if config["input_files"]["data"]["type"] == "ONT":
 if config["input_files"]["data"]["type"] == "PacBio":
     include: "rules/fibertools_predict.smk"
 include: "rules/bam_to_fastq_gz.smk"
-include: "rules/quality_control.smk"
+include: "rules/sequali.smk"
 include: "rules/install_kraken2_db.smk"
 include: "rules/kraken2.smk"
 include: "rules/minimap2.smk"

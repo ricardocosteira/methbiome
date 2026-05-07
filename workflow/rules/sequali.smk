@@ -4,7 +4,7 @@ rule sequali:
     output:
         directory(config["results"]["qc"]["sequali"]["dir"])
     conda:
-        "../envs/sequali.yaml"
+        "../envs/main.yaml"
     log:
         config["logs"]["sequali"]
     shell:

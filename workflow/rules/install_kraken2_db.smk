@@ -2,7 +2,7 @@ rule install_kraken2_db:
     output:
         directory(config["resources"]["kraken2_db"]["dir"])
     conda:
-        "../envs/python.yaml"
+        "../envs/main.yaml"
     params:
         kraken2_db_archive_path=config["resources"]["kraken2_db"]["archive_path"]
     log:

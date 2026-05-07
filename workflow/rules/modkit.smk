@@ -8,7 +8,7 @@ rule modkit:
     output:
         my_output
     conda:
-        "../envs/modkit.yaml"
+        "../envs/main.yaml"
     params:
         data_type=config["input_files"]["data"]["type"],
         minimum_methylation_likelihood=config["tool_specific_params"]["modkit"]["minimum_methylation_likelihood"]

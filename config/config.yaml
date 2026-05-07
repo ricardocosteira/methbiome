@@ -4,10 +4,10 @@ __use_yte__: true # YTE: YAML template engine see https://yte-template-engine.gi
 
 input_files:
     data:
-        dir: data # Input directory in resources containing either ONT POD5 or PacBio BAM
+        dir: sample1 # Input directory in resource/data containing either ONT POD5 or PacBio BAM
         type: ONT # ONT or PacBio
     minimap2:
-        reference_filename: reference.fasta # File should be in resources directory
+        reference_filename: reference.fasta # File should be in resources/assets directory
         index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
 
 tabix: True # Run tabix? True or False
@@ -34,20 +34,22 @@ minimap2_reference_basename: ?this["input_files"]["minimap2"]["reference_filenam
 __variables__:
     output_name: ?this["output_name"]
     resources_dir: resources
-    results_dir: results
+    assets_dir: ?f"{resources_dir}/assets"
+    results_dir: ?f"results/{output_name}"
     logs_dir: logs/rules
-    input_dir: ?f"{resources_dir}/" + this["input_files"]["data"]["dir"]
+    sample_logs_dir: ?f"{logs_dir}/{output_name}"
+    input_dir: ?f"{resources_dir}/data/" + this["input_files"]["data"]["dir"]
 
 resources:
-    dir: ?f"{resources_dir}"
+#    dir: ?f"{resources_dir}"
     dorado:
-        dir: ?f"{resources_dir}/dorado"
-        archive_path: ?f"{resources_dir}/dorado.tar.gz"
+        dir: ?f"{assets_dir}/dorado"
+        archive_path: ?f"{assets_dir}/dorado.tar.gz"
         binary_path: ?this["resources"]["dorado"]["dir"] + "/bin/dorado"
     kraken2_db:
-        dir: ?f"{resources_dir}/Kraken2DB_STANDARD"
-        installed: ?f"{resources_dir}/kraken2_db_installed.txt"
-        archive_path: ?f"{resources_dir}/kraken2_db.tar.gz"
+        dir: ?f"{assets_dir}/Kraken2DB_STANDARD"
+        installed: ?f"{assets_dir}/kraken2_db_installed.txt"
+        archive_path: ?f"{assets_dir}/kraken2_db.tar.gz"
 
 results:
     dorado_intermediate_bam_path: ?f"{results_dir}/{output_name}.bam"
@@ -72,22 +74,22 @@ input:
     dorado: ?f"{input_dir}"
     fibertools: ?f"{input_dir}"
     reference:
-        path: ?f"{resources_dir}/" + this["input_files"]["minimap2"]["reference_filename"]
+        path: ?f"{assets_dir}/" + this["input_files"]["minimap2"]["reference_filename"]
     index:
         ?if this["input_files"]["minimap2"]["index_filename"] is not None:
-            path: ?f"{resources_dir}/" + this["input_files"]["minimap2"]["index_filename"]
+            path: ?f"{assets_dir}/" + this["input_files"]["minimap2"]["index_filename"]
         ?else:
             path: null
 
 logs:
-    install_dorado: ?f"{logs_dir}/install_dorado.out"
-    dorado: ?f"{logs_dir}/dorado_{output_name}.out"
-    fibertools_predict: ?f"{logs_dir}/fibertools_predict_{output_name}.out"
-    bam_to_fastq_gz: ?f"{logs_dir}/bam_to_fastq_gz{output_name}.out"
-    sequali: ?f"{logs_dir}/sequali_{output_name}.out"
-    install_kraken2_db: ?f"{logs_dir}/install_kraken2_db.out"
-    kraken2: ?f"{logs_dir}/kraken2_{output_name}.out"
-    minimap2: ?f"{logs_dir}/minimap2_{output_name}.out"
-    filter_samtools: ?f"{logs_dir}/filter_samtools_{output_name}.out"
-    modkit: ?f"{logs_dir}/modkit_{output_name}.out"
-    tabix: ?f"{logs_dir}/tabix_{output_name}.out"
+    install_dorado: ?f"{sample_logs_dir}/install_dorado.out"
+    dorado: ?f"{sample_logs_dir}/dorado_{output_name}.out"
+    fibertools_predict: ?f"{sample_logs_dir}/fibertools_predict_{output_name}.out"
+    bam_to_fastq_gz: ?f"{sample_logs_dir}/bam_to_fastq_gz{output_name}.out"
+    sequali: ?f"{sample_logs_dir}/sequali_{output_name}.out"
+    install_kraken2_db: ?f"{sample_logs_dir}/install_kraken2_db.out"
+    kraken2: ?f"{sample_logs_dir}/kraken2_{output_name}.out"
+    minimap2: ?f"{sample_logs_dir}/minimap2_{output_name}.out"
+    filter_samtools: ?f"{sample_logs_dir}/filter_samtools_{output_name}.out"
+    modkit: ?f"{sample_logs_dir}/modkit_{output_name}.out"
+    tabix: ?f"{sample_logs_dir}/tabix_{output_name}.out"

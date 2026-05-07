@@ -1,1 +1,1 @@
-Holds all resources fetched by the pipeline (e.g. tools).
+All resources (user data, programme files (binaries and databases) are stored here).

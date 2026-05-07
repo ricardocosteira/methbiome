@@ -4,7 +4,7 @@ rule minimap2:
     output:
         temp(directory(config["results"]["minimap2"]["temp_dir"])) # Deleted once every rule requiring it has been executed successfully
     conda:
-        "../envs/minimap2.yaml"
+        "../envs/main.yaml"
     params:
         data_type=config["input_files"]["data"]["type"],
         reference_path=config["input"]["reference"]["path"]

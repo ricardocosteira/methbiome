@@ -4,7 +4,7 @@ rule tabix:
     output:
         directory(config["results"]["tabix"]["dir"])
     conda:
-        "../envs/tabix.yaml"
+        "../envs/main.yaml"
     log:
         config["logs"]["tabix"]
     shell:

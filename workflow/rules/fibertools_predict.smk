@@ -4,7 +4,7 @@ rule fibertools_predict:
     output:
         directory(config["results"]["bam_dir"])
     conda:
-        "../envs/fibertools.yaml"
+        "../envs/main.yaml"
     log:
         config["logs"]["fibertools_predict"]
     shell:
