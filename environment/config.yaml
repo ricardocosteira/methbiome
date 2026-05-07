@@ -16,7 +16,9 @@ slurm-logdir: logs/cluster
 default-resources:
     slurm_partition: cpu
     tasks: 1
-    slurm_extra: '--mail-type=ALL --mail-user=example@email.com'
+    mem: 128G
+    runtime: 1440 # Runtime is in minutes (= 24 hours)
+    ## slurm_extra: '--mail-type=ALL --mail-user=example@email.com' # Remove leading '## ' and put your email address for job status email notifications
 
 # In set-resources, the special_rule overriding the defaults where specified.
 
@@ -25,39 +27,62 @@ set-resources:
         slurm_partition: gpu
         tasks: 0 # A zero value disables the --ntasks-per-cpu flag, we need that to fix 'SLURM_TRES_PER_TASK is mutually exclusive with --ntasks-per-gpu and SLURM_NTASKS_PER_GPU'
         gres: 'gpu:1'
-        mem: 64000
+        mem: 128G
+        mem_mb: 128000
         runtime: 2880 # Runtime is in minutes (= 48 hours)
 
     fibertools_predict:
         slurm_partition: cpu
         tasks: 60
-        mem: 64000
+        mem: 128G
+        mem_mb: 128000
         runtime: 2880
 
     sequali:
         slurm_partition: cpu
         tasks: 60
-        mem: 64000
-        runtime: 240 # 4 hours
+        mem: 128G
+        mem_mb: 128000
+        runtime: 2880
 
     kraken2:
         slurm_partition: cpu
         tasks: 60
-        mem: 64000
+        mem: 128G
+        mem_mb: 128000
+        runtime: 2880
+
+    bam_to_fastq_gz:
+        slurm_partition: cpu
+        tasks: 60
+        mem: 128G
+        mem_mb: 128000
         runtime: 2880
 
     minimap2:
         slurm_partition: cpu
         tasks: 60
-        mem: 64000
+        mem: 128G
+        mem_mb: 128000
         runtime: 2880
 
     filter_samtools:
         slurm_partition: cpu
         tasks: 60
+        mem: 128G
+        mem_mb: 128000
+        runtime: 2880
 
     modkit:
         slurm_partition: cpu
         tasks: 60
-        mem: 64000
-        runtime: 240
+        mem: 128G
+        mem_mb: 128000
+        runtime: 2880
+
+    tabix:
+        slurm_partition: cpu
+        tasks: 60
+        mem: 128G
+        mem_mb: 128000
+        runtime: 2880
