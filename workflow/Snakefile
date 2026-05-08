@@ -1,7 +1,5 @@
-# Import config file
-configfile: "config/config.yaml"
-
 # Modules
+include: "rules/setup.smk"
 if config["input_files"]["data"]["type"] == "ONT":
     include: "rules/install_dorado.smk"
     include: "rules/dorado.smk"
