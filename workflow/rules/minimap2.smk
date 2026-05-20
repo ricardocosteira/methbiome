@@ -42,7 +42,7 @@ rule filter_samtools:
     output:
         directory(config["results"]["minimap2"]["filtered_dir"])
     conda:
-        "../envs/samtools.yaml"
+        "../envs/main.yaml"
     params:
         index_path=config["input"]["index"]["path"],
         mapping_quality=config["tool_specific_params"]["minimap2"]["mapping_quality"]
