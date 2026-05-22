@@ -11,6 +11,7 @@
 ## Table of Contents
 
 - [methbiome](#methbiome)
+  - [Table of Contents](#table-of-contents)
   - [I. Environment Dependencies](#i-environment-dependencies)
     - [A. SLURM Profile](#a-slurm-profile)
     - [B. CUDA](#b-cuda)
@@ -23,8 +24,9 @@
     - [A. Download methbiome](#a-download-methbiome)
     - [B. Configuration](#b-configuration)
     - [C. Pipeline Execution](#c-pipeline-execution)
-      - [1. Execution of the Entire Pipeline](#1-execution-of-the-entire-pipeline)
-      - [2. Execution of Part of the Pipeline](#2-execution-of-part-of-the-pipeline)
+      - [1. Parallel Processing Set Up](#1-parallel-processing-set-up)
+      - [2. Execution of the Entire Pipeline](#2-execution-of-the-entire-pipeline)
+      - [4. Execution of Part of the Pipeline](#4-execution-of-part-of-the-pipeline)
     - [D. Post-scripts](#d-post-scripts)
       - [1. Combine Sequali Reports into MultiQC](#1-combine-sequali-reports-into-multiqc)
       - [2. Combine MPA reports](#2-combine-mpa-reports)
@@ -70,27 +72,39 @@ git clone https://github.com/ricardocosteira/methbiome
 
 ### B. Configuration
 
-- Place the ONT or PacBio files in a subdirectory of `resources`. Please avoid naming it with spaces and special characters (other than '-' and '_').
-- Set parameters in [`config/config.yaml`](config/config.yaml) and resources in [`environment/config.yaml`](environment/config.yaml).
+- Place each ONT or PacBio sample in a subdirectory in `resources/data`. Please avoid naming it with spaces and special characters (other than '-' and '_').
+- For each sample you want to process make a copy of [`config/config.yaml`](config/config.yaml) in `config/` and set any relevant parameters.
+- For environment specific configuration like job resources, edit [`environment/config.yaml`](environment/config.yaml).
 
 ### C. Pipeline Execution
 
-#### 1. Execution of the Entire Pipeline
+#### 1. Parallel Processing Set Up
 
-Open a tmux session so that Snakemake can continue running in the background. Then, run the following command.
+Dependencies have to be installed first for parallel processing of samples. This has to be done before processing any sample!
 
 ```bash
-./run.sh
+snakemake --profile environment --configfile config/config.yaml setup
 ```
 
-#### 2. Execution of Part of the Pipeline
+
+#### 2. Execution of the Entire Pipeline
+
+For each sample follow these steps.
+
+Open a tmux session so that Snakemake can continue running in the background. Then, run the following command with the relevant configuration file.
+
+```bash
+snakemake --profile environment --configfile config/sample1_config.yaml
+```
+
+#### 4. Execution of Part of the Pipeline
 
 Open a tmux session so that Snakemake can continue running in the background. Then, replace `rule_name` in the following command and run it.
 
 This will run the pipeline up to the rule named `rule_name`, meaning that all rules on which `rule_name` depends are also executed.
 
 ```bash
-snakemake --profile environment rule_name
+snakemake --profile environment --configfile config/sample1_config.yaml rule_name
 ```
 
 ### D. Post-scripts
@@ -122,4 +136,3 @@ Run the following command, where `<directory1>`, `<directory2>`, ... are directo
 <br>
 
 The pipeline was tested using publicly available data for the ZymoBIOMICS D6323 fecal microbiome standard. ONT POD5s available at https://epi2me.nanoporetech.com/zymo_fecal_2025.05/. PacBio BAMs available at https://www.pacb.com/connect/datasets/.
-
