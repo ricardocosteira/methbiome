@@ -83,7 +83,7 @@ git clone https://github.com/ricardocosteira/methbiome
 Dependencies have to be installed first for parallel processing of samples. This has to be done before processing any sample!
 
 ```bash
-snakemake --profile environment --configfile config/config.yaml setup
+snakemake setup --profile environment --configfile config/config.yaml
 ```
 
 
@@ -104,7 +104,7 @@ Open a tmux session so that Snakemake can continue running in the background. Th
 This will run the pipeline up to the rule named `rule_name`, meaning that all rules on which `rule_name` depends are also executed.
 
 ```bash
-snakemake --profile environment --configfile config/sample1_config.yaml rule_name
+snakemake rule_name --profile environment --configfile config/sample1_config.yaml
 ```
 
 ### D. Post-scripts
