@@ -7,12 +7,16 @@ rule minimap2:
         "../envs/main.yaml"
     params:
         data_type=config["input_files"]["data"]["type"],
-        reference_path=config["input"]["reference"]["path"]
+        default_reference_path=config["input"]["default_reference"]["path"],
+        reference_map=lambda w: " ".join(f"{k}:{v}" for k, v in config["input_files"]["minimap2"]["barcode_reference_filename"].items()),
+        parent_directory=config["input"]["assets_dir"]
     log:
         config["logs"]["minimap2"]
     shell:
         """
         {{
+            source workflow/scripts/get_matched_value.sh
+
             if [ '{params.data_type}' == 'ONT' ]; then
                 map_type='map-ont'
             elif [ '{params.data_type}' == 'PacBio' ]; then
@@ -27,11 +31,13 @@ rule minimap2:
             for uBAM in '{input}'/*.bam; do
                 [ -e "$uBAM" ] || continue
 
+                matched_reference_path="$(get_matched_value "$uBAM" "{params.reference_map}" "{params.parent_directory}" "{params.default_reference_path}")
+
                 filename_with_extension="$(basename "$uBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
 
                 samtools fastq -TMM,ML "$uBAM" | \
-                minimap2 -ax "$map_type" -t "$(nproc)" -y --secondary=no '{params.reference_path}' - > "{output}/$filename_without_extension.sam"
+                minimap2 -ax "$map_type" -t "$(nproc)" -y --secondary=no "$matched_reference_path" - > "{output}/$filename_without_extension.sam"
             done
         }} &> {log}
         """
@@ -44,17 +50,23 @@ rule filter_samtools:
     conda:
         "../envs/main.yaml"
     params:
-        index_path=config["input"]["index"]["path"],
+        default_index_path=config["input"]["index"]["path"],
+        index_map=lambda w: " ".join(f"{k}:{v}" for k, v in config["input_files"]["minimap2"]["barcode_index_filename"].items()),
+        parent_directory=config["input"]["assets_dir"],
         mapping_quality=config["tool_specific_params"]["minimap2"]["mapping_quality"]
     log:
         config["logs"]["filter_samtools"]
     shell:
         """
         {{
+            source workflow/scripts/get_matched_value.sh
+
             mkdir -p '{output}'
 
             for sam in '{input}'/*.sam; do
                 [ -e "$sam" ] || continue
+
+                matched_index_path="$(get_matched_value "$sam" "{params.index_map}" "{params.parent_directory}" "{params.default_index_path}")
 
                 filename_with_extension="$(basename "$sam")"
                 filename_without_extension="${{filename_with_extension%.*}}"
@@ -65,16 +77,16 @@ rule filter_samtools:
                 sort_coverage="$filename_without_extension.sort.coverage"
 
                 samtools_view_command='samtools view -h -q "{params.mapping_quality}" -b -@ "$(nproc)"'
-                if [ '{params.index_path}' != 'None' ]
+                if [ "$matched_index_path" != 'None' ]
                 then
-                    samtools_view_command+=' -t "{params.index_path}"'
+                    samtools_view_command+=' -t "$matched_index_path"'
                 fi
                 samtools_view_command+=' "$sam" | samtools sort -@ "$(nproc)" -o "{output}/$sort_bam"'
                 
                 samtools_flagstat_command='samtools flagstat -@ "$(nproc)"'
-                if [ '{params.index_path}' != 'None' ]
+                if [ "$matched_index_path" != 'None' ]
                 then
-                    samtools_flagstat_command+=' --input-fmt-option reference="{params.index_path}"'
+                    samtools_flagstat_command+=' --input-fmt-option reference="$matched_index_path"'
                 fi
                 samtools_flagstat_command+=' "$sam" > "{output}/$flagstat"'
                 

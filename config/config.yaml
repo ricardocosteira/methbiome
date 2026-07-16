@@ -7,8 +7,12 @@ input_files:
         dir: sample1 # Input directory in resource/data containing either ONT POD5 or PacBio BAM
         type: ONT # ONT or PacBio
     minimap2:
-        reference_filename: reference.fasta # File should be in resources/assets directory
-        index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
+        default_reference_filename: reference.fasta # File should be in resources/assets directory
+        default_index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
+        barcode_reference_filename: null # If demultiplexing is true and you want to use custom references, please set a reference for each barcode as shown in the comment below, otherwise set to 'null' (without quotes)
+            # barcode1: custom_reference.fasta
+        barcode_index_filename: null # If demultiplexing is true and you want to use custom indices because reference > 4 GB, please set an index for each barcode as shown in the comment below, otherwise set to 'null' (without quotes)
+            # barcode1: custom_index.fai
 
 tabix: True # Run tabix? True or False
 
@@ -29,8 +33,6 @@ tool_specific_params: # Parameters used by the tools themselves
 
 ############################## The following is generated from the above should NOT to be modified ##############################
 
-minimap2_reference_basename: ?this["input_files"]["minimap2"]["reference_filename"].split('.')[0]
-
 __variables__:
     output_name: ?this["output_name"]
     resources_dir: resources
@@ -41,7 +43,6 @@ __variables__:
     input_dir: ?f"{resources_dir}/data/" + this["input_files"]["data"]["dir"]
 
 resources:
-#    dir: ?f"{resources_dir}"
     dorado:
         dir: ?f"{assets_dir}/dorado"
         archive_path: ?f"{assets_dir}/dorado.tar.gz"
@@ -62,7 +63,7 @@ results:
     kraken2:
         dir: ?f"{results_dir}/kraken2_{output_name}"
     minimap2:
-        dir: ?f"{results_dir}/minimap2_{output_name}_" + this["minimap2_reference_basename"]
+        dir: ?f"{results_dir}/minimap2_{output_name}"
         temp_dir: ?this["results"]["minimap2"]["dir"] + "_temp"
         filtered_dir: ?this["results"]["minimap2"]["dir"] + "_filtered"
     modkit:
@@ -71,13 +72,14 @@ results:
         dir: ?f"{results_dir}/tabix_{output_name}"
 
 input:
+    assets_dir: ?f"{assets_dir}"
     dorado: ?f"{input_dir}"
     fibertools: ?f"{input_dir}"
-    reference:
-        path: ?f"{assets_dir}/" + this["input_files"]["minimap2"]["reference_filename"]
-    index:
-        ?if this["input_files"]["minimap2"]["index_filename"] is not None:
-            path: ?f"{assets_dir}/" + this["input_files"]["minimap2"]["index_filename"]
+    default_reference:
+        path: ?f"{assets_dir}/" + this["input_files"]["minimap2"]["default_reference_filename"]
+    default_index:
+        ?if this["input_files"]["minimap2"]["default_index_filename"] is not None:
+            path: ?f"{assets_dir}/" + this["input_files"]["minimap2"]["default_index_filename"]
         ?else:
             path: null
 
