@@ -6,8 +6,8 @@ input_files:
     data:
         dir: sample1 # Input directory in resource/data containing either ONT POD5 or PacBio BAM
         type: ONT # ONT or PacBio
-    minimap2:
-        default_reference_filename: reference.fasta # File should be in resources/assets directory
+    minimap2: # All files provided in this sections should be in the resources/assets directory. File names containing 'None' (without quotes) will result in undefined behaviour.
+        default_reference_filename: reference.fasta
         default_index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
         barcode_reference_filename: null # If demultiplexing is true and you want to use custom references, please set a reference for each barcode as shown in the comment below, otherwise set to 'null' (without quotes)
             # barcode1: custom_reference.fasta

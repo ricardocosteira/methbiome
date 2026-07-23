@@ -13,8 +13,8 @@ get_matched_value() {
     MATCHED_VAL="$4"
 
     for pair in "$2"; do
-        KEY="${{pair%%:*}}"
-        VAL="${{pair##*:}}"
+        KEY="${pair%%:*}"
+        VAL="${pair##*:}"
 
         if [[ "$1" == *"$KEY"* ]]; then
             MATCHED_VAL="$3/$VAL"
