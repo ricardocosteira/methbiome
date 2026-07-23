@@ -6,8 +6,8 @@ dependencies:
   - kraken2=2.17.1
   - krakentools=1.2.1
   - minimap2=2.30
-  - samtools=1.23
-  - ont-modkit=0.6.1
+  - samtools=1.22.1
+  - ont-modkit=0.5.0
   - samtools=1.23
   - python=3.10
   - beautifulsoup4=4.14.2
@@ -15,4 +15,3 @@ dependencies:
   - samtools=1.23
   - sequali=1.0.2
   - tabix=1.11
-  - samtools=1.23
