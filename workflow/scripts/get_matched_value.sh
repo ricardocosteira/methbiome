@@ -1,7 +1,8 @@
 #!/bin/bash
 ## Get the matched value for a file name based on a paired mapping string.
 ## If the provided file name contains a substring that matches a key in the mapping string, the corresponding value will be returned.
-## If no match is found, a default value will be returned.
+## If the provided file name contains multiple substrings that match keys in the mapping string, the value corresponding to one of the longest matching key will be returned.
+## If no match is found, the default value will be returned.
 
 ## Arguments:
 ## 1. sample_name: The name of the sample to search for a match.
@@ -10,16 +11,17 @@
 ## 4. default value: The value path to return if no match is found.
 
 get_matched_value() {
-    MATCHED_VAL="$4"
+    matched_value="$4"
+    score=0
 
     for pair in "$2"; do
-        KEY="${pair%%:*}"
-        VAL="${pair##*:}"
+        key="${pair%%:*}"
+        val="${pair##*:}"
 
-        if [[ "$1" == *"$KEY"* ]]; then
-            MATCHED_VAL="$3/$VAL"
-            break
+        if [[ "$1" == *"$key"* && "${#key}" > "$score" ]]; then
+            matched_value="$3/$val"
+            score="${#key}"
         fi
     done
-    echo "$MATCHED_VAL"
+    echo "$matched_value"
 }
