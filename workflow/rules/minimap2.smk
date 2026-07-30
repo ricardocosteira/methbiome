@@ -31,7 +31,7 @@ rule minimap2:
             for uBAM in '{input}'/*.bam; do
                 [ -e "$uBAM" ] || continue
 
-                matched_reference_path="$(get_matched_value "$uBAM" "{params.reference_map}" "{params.parent_directory}" "{params.default_reference_path}")
+                matched_reference_path="$(get_matched_value "$uBAM" "{params.reference_map}" "{params.parent_directory}" "{params.default_reference_path}")"
 
                 filename_with_extension="$(basename "$uBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
