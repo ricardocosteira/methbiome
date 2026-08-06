@@ -74,6 +74,7 @@ results:
 
 input:
     assets_dir: ?f"{assets_dir}"
+    references_dir: ?f"{references_dir}"
     dorado: ?f"{input_dir}"
     fibertools: ?f"{input_dir}"
     default_reference:
