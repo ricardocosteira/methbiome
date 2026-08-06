@@ -6,7 +6,7 @@ input_files:
     data:
         dir: sample1 # Input directory in resource/data containing either ONT POD5 or PacBio BAM
         type: ONT # ONT or PacBio
-    minimap2: # All files provided in this sections should be in the resources/assets directory. File names containing 'None' (without quotes) will result in undefined behaviour.
+    minimap2: # All files provided in this sections should be in the resources/assets/references directory. 'null' (without quotes) file names  will result in undefined behaviour.
         default_reference_filename: reference.fasta
         default_index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
         barcode_reference_filename: null # If demultiplexing is true and you want to use custom references, please set a reference for each barcode as shown in the comment below, otherwise set to 'null' (without quotes)
@@ -37,6 +37,7 @@ __variables__:
     output_name: ?this["output_name"]
     resources_dir: resources
     assets_dir: ?f"{resources_dir}/assets"
+    references_dir: ?f"{assets_dir}/references"
     results_dir: ?f"results/{output_name}"
     logs_dir: logs/rules
     sample_logs_dir: ?f"{logs_dir}/{output_name}"
@@ -76,10 +77,10 @@ input:
     dorado: ?f"{input_dir}"
     fibertools: ?f"{input_dir}"
     default_reference:
-        path: ?f"{assets_dir}/" + this["input_files"]["minimap2"]["default_reference_filename"]
+        path: ?f"{references_dir}/" + this["input_files"]["minimap2"]["default_reference_filename"]
     default_index:
         ?if this["input_files"]["minimap2"]["default_index_filename"] is not None:
-            path: ?f"{assets_dir}/" + this["input_files"]["minimap2"]["default_index_filename"]
+            path: ?f"{references_dir}/" + this["input_files"]["minimap2"]["default_index_filename"]
         ?else:
             path: null
 
