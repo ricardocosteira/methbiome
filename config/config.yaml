@@ -10,9 +10,9 @@ input_files:
         default_reference_filename: reference.fasta
         default_index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
         barcode_reference_filename: null # If demultiplexing is true and you want to use custom references, please set a reference for each barcode as shown in the comment below, otherwise set to 'null' (without quotes)
-            # barcode1: custom_reference.fasta
+            # barcode01: custom_reference.fasta
         barcode_index_filename: null # If demultiplexing is true and you want to use custom indices because reference > 4 GB, please set an index for each barcode as shown in the comment below, otherwise set to 'null' (without quotes)
-            # barcode1: custom_index.fai
+            # barcode01: custom_index.fai
 
 tabix: True # Run tabix? True or False
 

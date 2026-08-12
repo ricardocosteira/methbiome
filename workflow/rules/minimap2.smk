@@ -31,10 +31,10 @@ rule minimap2:
             for uBAM in '{input}'/*.bam; do
                 [ -e "$uBAM" ] || continue
 
-                matched_reference_path="$(get_matched_value "$uBAM" "{params.reference_map}" "{params.parent_directory}" "{params.default_reference_path}")"
-
                 filename_with_extension="$(basename "$uBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
+
+                matched_reference_path="$(get_matched_value "$filename_without_extension" '{params.reference_map}' '{params.parent_directory}' '{params.default_reference_path}')"
 
                 samtools fastq -TMM,ML "$uBAM" | \
                 minimap2 -ax "$map_type" -t "$(nproc)" -y --secondary=no "$matched_reference_path" - > "{output}/$filename_without_extension.sam"

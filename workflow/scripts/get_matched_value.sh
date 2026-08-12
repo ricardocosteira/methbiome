@@ -14,7 +14,7 @@ get_matched_value() {
     matched_value="$4"
     score=0
 
-    for pair in "$2"; do
+    for pair in $2; do
         key="${pair%%:*}"
         val="${pair##*:}"
 
