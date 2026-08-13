@@ -4,19 +4,30 @@ __use_yte__: true # YTE: YAML template engine see https://yte-template-engine.gi
 
 input_files:
     data:
-        dir: sample1 # Input directory in resource/data containing either ONT POD5 or PacBio BAM
+        dir: run1 # Input directory in resource/data containing either ONT POD5 or PacBio BAM
         type: ONT # ONT or PacBio
     minimap2: # All files provided in this sections should be in the resources/references directory. 'null' (without quotes) file names  will result in undefined behaviour.
         default_reference_filename: reference.fasta
         default_index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
-        barcode_reference_filename: null # If demultiplexing is true and you want to use custom references, please set a reference for each barcode as shown in the comment below, otherwise set to 'null' (without quotes)
-            # barcode01: custom_reference.fasta
-        barcode_index_filename: null # If demultiplexing is true and you want to use custom indices because reference > 4 GB, please set an index for each barcode as shown in the comment below, otherwise set to 'null' (without quotes)
-            # barcode01: custom_index.fai
+
+        # If using demultiplexing in Dorado or various PacBio BAM files for the same run, please set the reference/index for each barcode/sample separately.
+        # Also set 'default_reference_filename', and 'default_index_filename' (if appropriate).
+        
+        # Otherwise, if you want to use 'default_reference_filename', and potentially 'default_index_filename' for the entire run, set 'multi_reference_filename' to 'null' (without quotes).
+    
+        #    Each barcode or sample will match a custom string as described below, which will determine what reference/index it will be mapped against.
+        #    E.g. 'barcode01' in a file name is custom string, 'sampleA' in a file name is a custom string
+        #    In the commented entries below, if the file name contains 'barcode01', the reference 'custom_reference1.fasta' and the index 'custom_index1.fai' will be used for mapping.
+        multi_reference_filename: null 
+            # barcode01: custom_reference1.fasta
+            # barcode02: custom_reference2.fasta
+        multi_index_filename: null # If demultiplexing is true and you want to use custom indices because reference > 4 GB, please set an index for each barcode as shown in the comment below, otherwise set to 'null' (without quotes)
+            # barcode01: custom_index1.fai
+            # barcode02: custom_index2.fai
 
 tabix: True # Run tabix? True or False
 
-output_name: sample1
+output_name: run1
 
 tool_specific_params: # Parameters used by the tools themselves
     dorado:

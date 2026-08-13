@@ -8,7 +8,7 @@ rule minimap2:
     params:
         data_type=config["input_files"]["data"]["type"],
         default_reference_path=config["input"]["default_reference"]["path"],
-        reference_map=None if config["input_files"]["minimap2"]["barcode_reference_filename"] is None else lambda w: " ".join(f"{k}:{v}" for k, v in config["input_files"]["minimap2"]["barcode_reference_filename"].items()),
+        reference_map=None if config["input_files"]["minimap2"]["multi_reference_filename"] is None else lambda w: " ".join(f"{k}:{v}" for k, v in config["input_files"]["minimap2"]["multi_reference_filename"].items()),
         parent_directory=config["input"]["references_dir"]
     log:
         config["logs"]["minimap2"]
@@ -51,7 +51,7 @@ rule filter_samtools:
         "../envs/main.yaml"
     params:
         default_index_path=config["input"]["default_index"]["path"],
-        index_map=None if config["input_files"]["minimap2"]["barcode_index_filename"] is None else lambda w: " ".join(f"{k}:{v}" for k, v in config["input_files"]["minimap2"]["barcode_index_filename"].items()),
+        index_map=None if config["input_files"]["minimap2"]["multi_index_filename"] is None else lambda w: " ".join(f"{k}:{v}" for k, v in config["input_files"]["minimap2"]["multi_index_filename"].items()),
         parent_directory=config["input"]["references_dir"],
         mapping_quality=config["tool_specific_params"]["minimap2"]["mapping_quality"]
     log:
