@@ -66,7 +66,7 @@ rule filter_samtools:
             for sam in '{input}'/*.sam; do
                 [ -e "$sam" ] || continue
 
-                matched_index_path="$(get_matched_value "$sam" "{params.index_map}" "{params.parent_directory}" "{params.default_index_path}")
+                matched_index_path="$(get_matched_value "$sam" '{params.index_map}' '{params.parent_directory}' '{params.default_index_path}')"
 
                 filename_with_extension="$(basename "$sam")"
                 filename_without_extension="${{filename_with_extension%.*}}"
