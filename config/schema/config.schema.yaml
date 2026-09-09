@@ -157,7 +157,6 @@ properties:
           mapping_quality:
             type: integer
             minimum: 0
-            maximum: 60
 
       modkit:
         type: object
