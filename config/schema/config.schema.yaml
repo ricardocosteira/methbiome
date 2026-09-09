@@ -1,0 +1,171 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+
+type: object
+required:
+  - input_files
+  - tabix
+  - output_name
+  - tool_specific_params
+
+properties:
+  input_files:
+    type: object
+    additionalProperties: false
+    required:
+      - data
+      - minimap2
+
+    properties:
+      data:
+        type: object
+        additionalProperties: false
+        required:
+          - dir
+          - type
+        properties:
+          dir:
+            type: object
+            additionalProperties: false
+            required:
+              - path
+              - custom_path
+            properties:
+              path:
+                type: string
+                pattern: '^(?!.*\/$).*'
+                minLength: 1
+              custom_path:
+                type: boolean
+          type:
+            type: string
+            enum:
+              - ONT
+              - PacBio
+
+      minimap2:
+        type: object
+        additionalProperties: false
+        required:
+          - custom_references_dir
+          - default_reference_filename
+          - default_index_filename
+          - multi_reference_filename
+          - multi_index_filename
+
+        properties:
+          custom_references_dir:
+            type:
+              - string
+              - "null"
+            pattern: '^(?!.*\/$).*'
+
+          default_reference_filename:
+            type: string
+            pattern: '\.fasta$'
+
+          default_index_filename:
+            type:
+              - string
+              - "null"
+            pattern: '\.fai$'
+
+          multi_reference_filename:
+            oneOf:
+              - type: "null"
+              - type: object
+                minProperties: 1
+                additionalProperties:
+                  type: string
+                  pattern: '\.fasta$'
+
+          multi_index_filename:
+            oneOf:
+              - type: "null"
+              - type: object
+                minProperties: 1
+                additionalProperties:
+                  type: string
+                  pattern: '\.fai$'
+
+  tabix:
+    type: boolean
+
+  output_name:
+    type: string
+    minLength: 1
+
+  tool_specific_params:
+    type: object
+    additionalProperties: false
+    required:
+      - dorado
+      - minimap2
+      - modkit
+
+    properties:
+      dorado:
+        type: object
+        additionalProperties: false
+        required:
+          - min_quality
+          - trim
+          - methylation_model
+          - demultiplexing
+          - mux_barcode_kit
+          - valid_file_size
+
+        properties:
+          min_quality:
+            type: integer
+            minimum: 0
+
+          trim:
+            type: string
+            minLength: 1
+
+          methylation_model:
+            type: string
+            minLength: 1
+
+          demultiplexing:
+            type: boolean
+
+          mux_barcode_kit:
+            type: string
+            minLength: 1
+
+          valid_file_size:
+            type: string
+            pattern: '^[0-9]+[cwbkMG]$'
+
+        allOf:
+          - if:
+              properties:
+                demultiplexing:
+                  const: true
+            then:
+              properties:
+                mux_barcode_kit:
+                  minLength: 1
+
+      minimap2:
+        type: object
+        additionalProperties: false
+        required:
+          - mapping_quality
+        properties:
+          mapping_quality:
+            type: integer
+            minimum: 0
+            maximum: 60
+
+      modkit:
+        type: object
+        additionalProperties: false
+        required:
+          - minimum_methylation_likelihood
+        properties:
+          minimum_methylation_likelihood:
+            type: number
+            minimum: 0
+            maximum: 1

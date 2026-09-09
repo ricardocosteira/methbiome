@@ -4,9 +4,12 @@ __use_yte__: true # YTE: YAML template engine see https://yte-template-engine.gi
 
 input_files:
     data:
-        dir: run1 # Input directory in resource/data containing either ONT POD5 or PacBio BAM
+        dir:
+            path: run1 # Input to directory containing either ONT POD5 or PacBio BAM
+            custom_path: True # Directory not in resources/data? True or False
         type: ONT # ONT or PacBio
-    minimap2: # All files provided in this sections should be in the resources/references directory. 'null' (without quotes) file names  will result in undefined behaviour.
+    minimap2:
+        custom_references_dir: null # If null, we expect references and indices to be resources/data. Otherwise we expect them to be in the designated directory.
         default_reference_filename: reference.fasta
         default_index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
 
@@ -36,7 +39,8 @@ tool_specific_params: # Parameters used by the tools themselves
         methylation_model: hac,4mC_5mC,6mA
         demultiplexing: False # True or False
         mux_barcode_kit: SQK-NBD114-24 # Can be empty if demultiplex is False
-        valid_file_size: 1G # E.g. 1G, 500M. When demultiplexing is true, we only want to carry barcodes with actual data downstream. So only files greater than this parameter will be processed by subsequent rules.
+        # When demultiplexing is true, we only want to carry barcodes with actual data downstream. So only files greater than valid_file_size will be processed by subsequent rules.
+        valid_file_size: 1G # E.g. 1G, 500M (Valid units: c, w, b, k, M, G. Positive integer value only).
     minimap2:
         mapping_quality: 20
     modkit:
@@ -48,11 +52,9 @@ __variables__:
     output_name: ?this["output_name"]
     resources_dir: resources
     assets_dir: ?f"{resources_dir}/assets"
-    references_dir: ?f"{resources_dir}/references"
     results_dir: ?f"results/{output_name}"
     logs_dir: logs/rules
     sample_logs_dir: ?f"{logs_dir}/{output_name}"
-    input_dir: ?f"{resources_dir}/data/" + this["input_files"]["data"]["dir"]
 
 resources:
     dorado:
@@ -85,16 +87,12 @@ results:
 
 input:
     assets_dir: ?f"{assets_dir}"
-    references_dir: ?f"{references_dir}"
-    dorado: ?f"{input_dir}"
-    fibertools: ?f"{input_dir}"
+    references_dir: ?f"{resources_dir}/references" if this["input_files"]["minimap2"]["custom_references_dir"] is None else this["input_files"]["minimap2"]["custom_references_dir"]
+    data_dir: ?this["input_files"]["data"]["dir"]["path"] if this["input_files"]["data"]["dir"]["custom_path"] else f"{resources_dir}/data/" + this["input_files"]["data"]["dir"]["path"]
     default_reference:
-        path: ?f"{references_dir}/" + this["input_files"]["minimap2"]["default_reference_filename"]
+        path: ?this["input"]["references_dir"] + "/" + this["input_files"]["minimap2"]["default_reference_filename"]
     default_index:
-        ?if this["input_files"]["minimap2"]["default_index_filename"] is not None:
-            path: ?f"{references_dir}/" + this["input_files"]["minimap2"]["default_index_filename"]
-        ?else:
-            path: null
+        path: ?None if this["input_files"]["minimap2"]["default_index_filename"] is None else this["input"]["references_dir"] + "/" + this["input_files"]["minimap2"]["default_index_filename"]
 
 logs:
     install_dorado: ?f"{sample_logs_dir}/install_dorado.out"

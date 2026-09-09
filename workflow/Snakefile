@@ -1,4 +1,10 @@
-# Modules
+from snakemake.utils import validate
+from scripts.validate_config_paths import validate_paths
+
+
+validate(config, "../config/schema/config.schema.yaml")
+validate_paths(config)
+
 include: "rules/setup.smk"
 if config["input_files"]["data"]["type"] == "ONT":
     include: "rules/install_dorado.smk"

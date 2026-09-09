@@ -19,11 +19,8 @@ rule minimap2:
 
             if [ '{params.data_type}' == 'ONT' ]; then
                 map_type='map-ont'
-            elif [ '{params.data_type}' == 'PacBio' ]; then
-                map_type='map-hifi'
             else
-                echo 'Input data type not set'
-                exit 1
+                map_type='map-hifi'
             fi
 
             mkdir -p '{output}'

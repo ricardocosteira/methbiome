@@ -1,6 +1,6 @@
 rule dorado:
     input:
-        input_dir=config["input"]["dorado"],
+        input_dir=config["input"]["data_dir"],
         dorado_dir=config["resources"]["dorado"]["dir"]
     output:
         directory(config["results"]["bam_dir"])

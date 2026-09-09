@@ -1,6 +1,6 @@
 rule fibertools_predict:
     input:
-        input_data=config["input"]["fibertools"]
+        input_data=config["input"]["data_dir"]
     output:
         directory(config["results"]["bam_dir"])
     conda:
