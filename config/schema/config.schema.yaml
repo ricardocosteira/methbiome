@@ -14,7 +14,7 @@ properties:
     required:
       - data
       - minimap2
-
+      - kraken2
     properties:
       data:
         type: object
@@ -86,6 +86,24 @@ properties:
                 additionalProperties:
                   type: string
                   pattern: '\.fai$'
+      kraken2:
+        type: object
+        additionalProperties: false
+        required:
+          - database
+        properties:
+          database:
+            type: object
+            additionalProperties: false
+            required:
+              - path
+            properties:
+              path:
+                type:
+                  - string
+                  - "null"
+                pattern: '^(?!.*\/$).*'
+                minLength: 1
 
   tabix:
     type: boolean

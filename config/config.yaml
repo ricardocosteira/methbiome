@@ -5,11 +5,11 @@ __use_yte__: true # YTE: YAML template engine see https://yte-template-engine.gi
 input_files:
     data:
         dir:
-            path: run1 # Input to directory containing either ONT POD5 or PacBio BAM
+            path: run1 # Input to directory containing either ONT POD5 or PacBio BAM (avoid trailing '/')
             custom_path: True # Directory not in resources/data? True or False
         type: ONT # ONT or PacBio
     minimap2:
-        custom_references_dir: null # If null, we expect references and indices to be resources/data. Otherwise we expect them to be in the designated directory.
+        custom_references_dir: null # If null, we expect references and indices to be resources/data. Otherwise we expect them to be in the designated directory (avoid trailing '/').
         default_reference_filename: reference.fasta
         default_index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
 
@@ -27,6 +27,9 @@ input_files:
         multi_index_filename: null # If demultiplexing is true and you want to use custom indices because reference > 4 GB, please set an index for each barcode as shown in the comment below, otherwise set to 'null' (without quotes)
             # barcode01: custom_index1.fai
             # barcode02: custom_index2.fai
+    kraken2:
+        database:
+            path: null # Path to uncompressed database (avoid trailing '/'). If null, the default standard database will be downloaded.
 
 tabix: True # Run tabix? True or False
 
@@ -57,13 +60,13 @@ __variables__:
     sample_logs_dir: ?f"{logs_dir}/{output_name}"
 
 resources:
+    input_validation: ?f"{results_dir}/input_validation.ok"
     dorado:
         dir: ?f"{assets_dir}/dorado"
         archive_path: ?f"{assets_dir}/dorado.tar.gz"
         binary_path: ?this["resources"]["dorado"]["dir"] + "/bin/dorado"
     kraken2_db:
-        dir: ?f"{assets_dir}/Kraken2DB_STANDARD"
-        installed: ?f"{assets_dir}/kraken2_db_installed.txt"
+        dir: ?f"{assets_dir}/Kraken2DB" if this["input_files"]["kraken2"]["database"]["path"] is None else this["input_files"]["kraken2"]["database"]["path"]
         archive_path: ?f"{assets_dir}/kraken2_db.tar.gz"
 
 results:
@@ -95,6 +98,7 @@ input:
         path: ?None if this["input_files"]["minimap2"]["default_index_filename"] is None else this["input"]["references_dir"] + "/" + this["input_files"]["minimap2"]["default_index_filename"]
 
 logs:
+    input_validation: ?f"{sample_logs_dir}/input_validation.out"
     install_dorado: ?f"{sample_logs_dir}/install_dorado.out"
     dorado: ?f"{sample_logs_dir}/dorado_{output_name}.out"
     fibertools_predict: ?f"{sample_logs_dir}/fibertools_predict_{output_name}.out"

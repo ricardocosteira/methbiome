@@ -1,6 +1,7 @@
 rule fibertools_predict:
     input:
-        input_data=config["input"]["data_dir"]
+        data=config["input"]["data_dir"],
+        validation=config["resources"]["input_validation"]
     output:
         directory(config["results"]["bam_dir"])
     conda:
@@ -12,7 +13,7 @@ rule fibertools_predict:
         {{
             mkdir -p '{output}'
             
-            for uBAM in '{input}'/*.bam; do
+            for uBAM in '{input.data}'/*.bam; do
                 [ -e "$uBAM" ] || continue
                                 
                 filename_with_extension="$(basename "$uBAM")"

@@ -60,6 +60,12 @@ def _validate_multi(multi, key_name, reference_path):
                 f"{key_name}[{match_string}]",
             )
 
+
+def _validate_kraken2_database(path, path_key):
+    if not path is None:
+        _require_existing_directory(path, path_key)
+
+
 def validate_paths(config):
     input_attribute = config.get("input")
     input_files = config.get("input_files")
@@ -79,3 +85,6 @@ def validate_paths(config):
     _validate_multi(minimap2.get(multi_reference_key), multi_reference_key, reference_path)
     multi_index_key = "multi_index_filename"
     _validate_multi(minimap2.get(multi_index_key), multi_index_key, reference_path)
+
+    kraken2_database = input_files.get("kraken2").get("database")
+    _validate_kraken2_database(kraken2_database.get("path"), "input_files.kraken2.database.path")

@@ -10,10 +10,12 @@ if config["input_files"]["data"]["type"] == "ONT":
     include: "rules/install_dorado.smk"
     include: "rules/dorado.smk"
 if config["input_files"]["data"]["type"] == "PacBio":
+    include: "rules/validate_PacBio_input.smk"
     include: "rules/fibertools_predict.smk"
 include: "rules/bam_to_fastq_gz.smk"
 include: "rules/sequali.smk"
-include: "rules/install_kraken2_db.smk"
+if config["input_files"]["kraken2"]["database"]["path"] is None:
+    include: "rules/install_kraken2_db.smk"
 include: "rules/kraken2.smk"
 include: "rules/minimap2.smk"
 include: "rules/modkit.smk"
