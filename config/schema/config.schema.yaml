@@ -15,6 +15,7 @@ properties:
       - data
       - minimap2
       - kraken2
+      - cuda_script_path
     properties:
       data:
         type: object
@@ -104,6 +105,12 @@ properties:
                   - "null"
                 pattern: '^(?!.*\/$).*'
                 minLength: 1
+
+      cuda_script_path:
+          type:
+            - string
+            - "null"
+          minLength: 1
 
   tabix:
     type: boolean

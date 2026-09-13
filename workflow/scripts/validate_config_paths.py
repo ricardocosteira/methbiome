@@ -65,6 +65,9 @@ def _validate_kraken2_database(path, path_key):
     if not path is None:
         _require_existing_directory(path, path_key)
 
+def _validate_cuda_script_path(path, path_key):
+    if not path is None:
+        _require_existing_file(path, path_key)
 
 def validate_paths(config):
     input_attribute = config.get("input")
@@ -88,3 +91,5 @@ def validate_paths(config):
 
     kraken2_database = input_files.get("kraken2").get("database")
     _validate_kraken2_database(kraken2_database.get("path"), "input_files.kraken2.database.path")
+
+    _validate_cuda_script_path(input_files.get("cuda_script_path"), "input_files.cuda_script_path")

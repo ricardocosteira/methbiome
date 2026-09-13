@@ -13,15 +13,18 @@ rule dorado:
         demultiplexing=config["tool_specific_params"]["dorado"]["demultiplexing"],
         mux_barcode_kit=config["tool_specific_params"]["dorado"]["mux_barcode_kit"],
         dorado_invalid_dir=config["results"]["dorado_invalid_dir"],
-        valid_file_size=config["tool_specific_params"]["dorado"]["valid_file_size"]
+        valid_file_size=config["tool_specific_params"]["dorado"]["valid_file_size"],
+        cuda_script_path=config["input_files"]["cuda_script_path"]
     log:
         config["logs"]["dorado"]
     shell:
         """
         {{ 
-            # Double braces are interpreted as single braces by snakemake
-            source workflow/scripts/source_profile.sh # Needed for module command to be recognised
-            module load cuda
+            if [ '{params.cuda_script_path}' != 'None' ]
+            then
+                '{params.cuda_script_path}'
+
+            fi
 
             '{params.dorado_path}' basecaller \
                 --recursive \

@@ -31,6 +31,8 @@ input_files:
         database:
             path: null # Path to uncompressed database (avoid trailing '/'). If null, the default standard database will be downloaded.
 
+    cuda_script_path: workflow/scripts/load_cuda.sh # Path to script that will load CUDA or 'null' (without quotes)
+
 tabix: True # Run tabix? True or False
 
 output_name: run1
