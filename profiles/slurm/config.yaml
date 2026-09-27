@@ -1,4 +1,4 @@
-# Config specific to Slurm execution
+# Profile for Slurm execution
 # See https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html for details on how to set other resources types,
 # and https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles for documentation on profiles.
 
