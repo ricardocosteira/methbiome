@@ -13,3 +13,4 @@ dependencies:
   - requests=2.32.5
   - sequali=1.0.2
   - tabix=1.11
+  - pod5=0.3.49

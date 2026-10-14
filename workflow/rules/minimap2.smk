@@ -34,9 +34,9 @@ rule minimap2:
                 matched_reference_path="$(get_matched_value "$filename_without_extension" '{params.reference_map}' '{params.parent_directory}' '{params.default_reference_path}')"
 
                 samtools fastq -TMM,ML "$uBAM" | \
-                minimap2 -ax "$map_type" -t "$(nproc)" -y --secondary=no "$matched_reference_path" - > "{output}/$filename_without_extension.sam"
+                minimap2 -ax "$map_type" -t "$(getconf _NPROCESSORS_ONLN)" -y --secondary=no "$matched_reference_path" - > "{output}/$filename_without_extension.sam"
             done
-        }} &> {log}
+        }} &> '{log}'
         """
 
 rule filter_samtools:
@@ -73,14 +73,14 @@ rule filter_samtools:
                 sort_flagstat="$filename_without_extension.sort.flagstat"
                 sort_coverage="$filename_without_extension.sort.coverage"
 
-                samtools_view_command='samtools view -h -q "{params.mapping_quality}" -b -@ "$(nproc)"'
+                samtools_view_command='samtools view -h -q "{params.mapping_quality}" -b -@ "$(getconf _NPROCESSORS_ONLN)"'
                 if [ "$matched_index_path" != 'None' ]
                 then
                     samtools_view_command+=' -t "$matched_index_path"'
                 fi
-                samtools_view_command+=' "$sam" | samtools sort -@ "$(nproc)" -o "{output}/$sort_bam"'
+                samtools_view_command+=' "$sam" | samtools sort -@ "$(getconf _NPROCESSORS_ONLN)" -o "{output}/$sort_bam"'
                 
-                samtools_flagstat_command='samtools flagstat -@ "$(nproc)"'
+                samtools_flagstat_command='samtools flagstat -@ "$(getconf _NPROCESSORS_ONLN)"'
                 if [ "$matched_index_path" != 'None' ]
                 then
                     samtools_flagstat_command+=' --input-fmt-option reference="$matched_index_path"'
@@ -88,11 +88,11 @@ rule filter_samtools:
                 samtools_flagstat_command+=' "$sam" > "{output}/$flagstat"'
                 
                 eval "$samtools_view_command"
-                samtools index -@ "$(nproc)" -o "{output}/$sort_bai" "{output}/$sort_bam"
+                samtools index -@ "$(getconf _NPROCESSORS_ONLN)" -o "{output}/$sort_bai" "{output}/$sort_bam"
                 eval "$samtools_flagstat_command"
-                samtools flagstat -@ "$(nproc)" "{output}/$sort_bam" > "{output}/$sort_flagstat"
+                samtools flagstat -@ "$(getconf _NPROCESSORS_ONLN)" "{output}/$sort_bam" > "{output}/$sort_flagstat"
                 samtools coverage "{output}/$sort_bam" > "{output}/$sort_coverage"
                 
             done
-        }} &> {log}
+        }} &> '{log}'
         """     

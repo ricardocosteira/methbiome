@@ -22,7 +22,7 @@ rule kraken2:
                 filename_without_extension="${{filename_with_extension%.*}}"
                 report_path="{output}/$filename_without_extension.kreport2"
 
-                kraken2 --threads "$(nproc)" \
+                kraken2 --threads "$(getconf _NPROCESSORS_ONLN)" \
                     --db '{params.kraken2_db_dir}' \
                     --report "$report_path" \
                     --gzip-compressed "$fastq_gz" \
@@ -33,5 +33,5 @@ rule kraken2:
                     -o "$report_path.mpa" \
                     --intermediate-ranks --display-header
             done
-        }} &> {log}
+        }} &> '{log}'
         """

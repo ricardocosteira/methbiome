@@ -16,5 +16,5 @@ rule tabix:
                 bgzip "$BED"
                 tabix "$BED.gz"
             done
-        }} &> {log}
+        }} &> '{log}'
         """

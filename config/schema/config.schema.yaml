@@ -15,7 +15,7 @@ properties:
       - data
       - minimap2
       - kraken2
-      - cuda_script_path
+      - dorado
     properties:
       data:
         type: object
@@ -62,7 +62,7 @@ properties:
 
           default_reference_filename:
             type: string
-            pattern: '\.fasta$'
+            pattern: '\.(fasta|fna)$'
 
           default_index_filename:
             type:
@@ -106,11 +106,24 @@ properties:
                 pattern: '^(?!.*\/$).*'
                 minLength: 1
 
-      cuda_script_path:
-          type:
-            - string
-            - "null"
-          minLength: 1
+      dorado:
+        type: object
+        additionalProperties: false
+        required:
+          - archive
+        properties:
+          archive:
+            type: object
+            additionalProperties: false
+            required:
+              - path
+            properties:
+              path:
+                type:
+                  - string
+                  - "null"
+                pattern: '^(?!.*\/$).*'
+                minLength: 1
 
   tabix:
     type: boolean
@@ -140,6 +153,10 @@ properties:
           - valid_file_size
 
         properties:
+          min_quality:
+            type: integer
+            minimum: 0
+
           min_quality:
             type: integer
             minimum: 0

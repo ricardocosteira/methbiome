@@ -19,8 +19,8 @@ rule fibertools_predict:
                 filename_with_extension="$(basename "$uBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
                 
-                ft predict-m6a --keep -t "$(nproc)" -v "$uBAM" "{output}/$filename_without_extension.bam"
+                ft predict-m6a --keep -t "$(getconf _NPROCESSORS_ONLN)" -v "$uBAM" "{output}/$filename_without_extension.bam"
             done
-        }} &> {log}
+        }} &> '{log}'
 
         """

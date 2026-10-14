@@ -10,7 +10,7 @@ input_files:
         type: ONT # ONT or PacBio
     minimap2:
         custom_references_dir: null # If null, we expect references and indices to be resources/data. Otherwise we expect them to be in the designated directory (avoid trailing '/').
-        default_reference_filename: reference.fasta
+        default_reference_filename: genomes.fna
         default_index_filename: null # If reference > 4 GB please set index .fai file, otherwise set to 'null' (without quotes)
 
         # If using demultiplexing in Dorado or various PacBio BAM files for the same run, please set the reference/index for each barcode/sample separately.
@@ -31,7 +31,9 @@ input_files:
         database:
             path: null # Path to uncompressed database (avoid trailing '/'). If null, the default standard database will be downloaded.
 
-    cuda_script_path: workflow/scripts/load_cuda.sh # Path to script that will load CUDA or 'null' (without quotes)
+    dorado:
+        archive:
+            path: null # Path to uncompressed database (avoid trailing '/'). If null, the linux-x64 version will be downloaded
 
 tabix: True # Run tabix? True or False
 
@@ -64,7 +66,7 @@ __variables__:
 resources:
     input_validation: ?f"{results_dir}/input_validation.ok"
     dorado:
-        dir: ?f"{assets_dir}/dorado"
+        dir: ?f"{assets_dir}/dorado" if this["input_files"]["dorado"]["archive"]["path"] is None else this["input_files"]["dorado"]["archive"]["path"]
         archive_path: ?f"{assets_dir}/dorado.tar.gz"
         binary_path: ?this["resources"]["dorado"]["dir"] + "/bin/dorado"
     kraken2_db:

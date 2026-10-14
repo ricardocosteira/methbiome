@@ -8,52 +8,52 @@ software-deployment-method:
   - conda
 
 default-resources:
-  mem_mb: 128000
+  mem_mb: 8000
   runtime: 1440
 
 set-threads:
-  dorado: 1
-  fibertools_predict: 60
-  sequali: 60
-  kraken2: 60
-  bam_to_fastq_gz: 60
-  minimap2: 60
-  filter_samtools: 60
-  modkit: 60
+  dorado: 4
+  fibertools_predict: 1
+  sequali: 1
+  kraken2: 1
+  bam_to_fastq_gz: 1
+  minimap2: 1
+  filter_samtools: 1
+  modkit: 1
 
 set-resources:
   dorado:
-    mem_mb: 128000
+    mem_mb: 8000
     runtime: 2880
 
   fibertools_predict:
-    mem_mb: 128000
+    mem_mb: 8000
     runtime: 2880
 
   sequali:
-    mem_mb: 128000
+    mem_mb: 8000
     runtime: 2880
 
   kraken2:
-    mem_mb: 128000
+    mem_mb: 8000
     runtime: 2880
 
   bam_to_fastq_gz:
-    mem_mb: 128000
+    mem_mb: 8000
     runtime: 2880
 
   minimap2:
-    mem_mb: 128000
+    mem_mb: 8000
     runtime: 2880
 
   filter_samtools:
-    mem_mb: 128000
+    mem_mb: 8000
     runtime: 2880
 
   modkit:
-    mem_mb: 128000
+    mem_mb: 8000
     runtime: 2880
 
   tabix:
-    mem_mb: 128000
+    mem_mb: 8000
     runtime: 2880

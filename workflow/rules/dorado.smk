@@ -14,18 +14,11 @@ rule dorado:
         mux_barcode_kit=config["tool_specific_params"]["dorado"]["mux_barcode_kit"],
         dorado_invalid_dir=config["results"]["dorado_invalid_dir"],
         valid_file_size=config["tool_specific_params"]["dorado"]["valid_file_size"],
-        cuda_script_path=config["input_files"]["cuda_script_path"]
     log:
         config["logs"]["dorado"]
     shell:
         """
         {{ 
-            if [ '{params.cuda_script_path}' != 'None' ]
-            then
-                '{params.cuda_script_path}'
-
-            fi
-
             '{params.dorado_path}' basecaller \
                 --recursive \
                 --verbose \
@@ -43,11 +36,11 @@ rule dorado:
                     --verbose \
                     --output-dir '{params.dorado_invalid_dir}' \
                     --kit-name '{params.mux_barcode_kit}' \
-                    --threads "$(nproc)" \
+                    --threads "$(getconf _NPROCESSORS_ONLN)" \
                     '{params.intermediate_bam_path}'
                 find '{params.dorado_invalid_dir}' -type f -name '*.bam' -not -name '*unclassified*.bam'  -size +'{params.valid_file_size}' -exec mv {{}} '{output}' \\;
             else
                 mv '{params.intermediate_bam_path}' '{output}'
             fi
-        }} &> {log}
+        }} &> '{log}'
         """

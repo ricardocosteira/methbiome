@@ -1,4 +1,5 @@
 rule install_dorado:
+    localrule: True
     output:
         directory(config["resources"]["dorado"]["dir"])
     conda:
@@ -17,5 +18,5 @@ rule install_dorado:
             tar -xvzf '{params.dorado_archive_path}' -C '{output}' --strip-components=1
 
             rm -f '{params.dorado_archive_path}'
-        }} &> {log}
+        }} &> '{log}'
         """

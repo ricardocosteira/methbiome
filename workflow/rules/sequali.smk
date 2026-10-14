@@ -17,7 +17,7 @@ rule sequali:
 
                 filename_with_extension="$(basename "$uBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
-                sequali -t "$(nproc)" --html "$filename_without_extension.html" --json "$filename_without_extension.json" "$uBAM" --outdir '{output}'
+                sequali -t "$(getconf _NPROCESSORS_ONLN)" --html "$filename_without_extension.html" --json "$filename_without_extension.json" "$uBAM" --outdir '{output}'
             done
-        }} &> {log}
+        }} &> '{log}'
         """

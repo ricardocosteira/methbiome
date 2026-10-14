@@ -26,7 +26,7 @@ rule modkit:
 
                 if [ '{params.data_type}' == 'PacBio' ]; then
                     explicit_bam="${{input_bam}}_explicit.bam"
-                    modkit modbam update-tags -t "$(nproc)" -m explicit $input_bam "$explicit_bam"
+                    modkit modbam update-tags -t "$(getconf _NPROCESSORS_ONLN)" -m explicit $input_bam "$explicit_bam"
 
                     rm -f "$input_bam" "${{input_bam}}.bai"
                     input_bam="$explicit_bam"
@@ -34,7 +34,7 @@ rule modkit:
 
                 samtools index "$input_bam"
 
-                modkit pileup -t "$(nproc)" --filter-threshold '{params.minimum_methylation_likelihood}' --header "$input_bam" "{output}/$filename_without_extension.bed"
+                modkit pileup -t "$(getconf _NPROCESSORS_ONLN)" --filter-threshold '{params.minimum_methylation_likelihood}' --header "$input_bam" "{output}/$filename_without_extension.bed"
             done
-        }} &> {log}
+        }} &> '{log}'
         """

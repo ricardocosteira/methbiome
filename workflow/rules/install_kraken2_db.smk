@@ -1,4 +1,5 @@
 rule install_kraken2_db:
+    localrule: True
     output:
         directory(config["resources"]["kraken2_db"]["dir"])
     conda:
@@ -17,5 +18,5 @@ rule install_kraken2_db:
             tar -xvzf '{params.kraken2_db_archive_path}' -C '{output}'
             
             rm -f '{params.kraken2_db_archive_path}'
-        }} &> {log}
+        }} &> '{log}'
         """

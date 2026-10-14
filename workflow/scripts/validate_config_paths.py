@@ -6,83 +6,58 @@ def _fail(message):
     raise WorkflowError(f"Configuration error: {message}")
 
 
-def _require_existing_file(filename, name):
-    path = Path(filename)
-    if not path.is_file():
-        _fail(f"File configured by '{name}' does not exist: {path}")
-    return path
+def _require_existing_file_if_not_none(filename, name):
+    if not filename is None:
+        path = Path(filename)
+        if not path.is_file():
+            _fail(f"File configured by '{name}' does not exist: {path}")
 
 
-def _require_existing_directory(dirname, name):
-    path = Path(dirname)
-    print(f"here is the pa{path}")
-    if not path.is_dir():
-        _fail(f"Directory configured by '{name}' does not exist: {path}")
-    return path
+def _require_existing_directory_if_not_none(dirname, name):
+    if not dirname is None:
+        path = Path(dirname)
+        if not path.is_dir():
+            _fail(f"Directory configured by '{name}' does not exist: {path}")
+
 
 def _contains_appropriate_file(dir, type, key_name):
-    path = Path(dir)
     required_extension = "pod5" if type == "ONT" else "bam"
-    if not any(candidate.is_file() for candidate in path.glob(f"*.{required_extension}")):
+    _directory_contains_appropriate_file(dir, required_extension, key_name)
+
+
+def _directory_contains_appropriate_file(dir, file_extension, key_name):
+    path = Path(dir)
+    if not any(candidate.is_file() for candidate in path.glob(f"*.{file_extension}")):
         _fail(
             f"Directory configured by '{key_name}' contains no "
-            f"{required_extension} files: {path}"
+            f"{file_extension} files: {path}"
         )
 
-
-def _validate_data_dir(data_dir):
-    _require_existing_directory(
-        data_dir,
-        "input_files.data.dir",
-    )
-    
-
-def _validate_default_reference(default_reference_path):
-    _require_existing_file(
-        default_reference_path,
-        "input_files.minimap2.default_reference_filename",
-    )
-
-
-def _validate_default_index(default_index_path):
-    if default_index_path is not None:
-         _require_existing_file(
-             default_index_path,
-             "input_files.minimap2.default_index_filename",
-         )
 
 def _validate_multi(multi, key_name, reference_path):
     if multi is not None:
         for match_string, filename in multi.items():
             file = reference_path / filename
-            _require_existing_file(
+            _require_existing_file_if_not_none(
                 file,
                 f"{key_name}[{match_string}]",
             )
 
-
-def _validate_kraken2_database(path, path_key):
-    if not path is None:
-        _require_existing_directory(path, path_key)
-
-def _validate_cuda_script_path(path, path_key):
-    if not path is None:
-        _require_existing_file(path, path_key)
-
 def validate_paths(config):
     input_attribute = config.get("input")
     input_files = config.get("input_files")
+
     data_dir = input_attribute.get("data_dir")
-
-    _validate_data_dir(data_dir)
-
+    _require_existing_directory_if_not_none(data_dir, "input_files.data.dir")
     _contains_appropriate_file(data_dir, input_files.get("data").get("type"), "input_files.data.dir")
 
-    _validate_default_reference(input_attribute.get("default_reference").get("path"))
-    _validate_default_index(input_attribute.get("default_index").get("path"))
+    minimap2 = input_files.get("minimap2")
+    _require_existing_directory_if_not_none(minimap2.get("custom_references_dir"), "input_files.minimap2.custom_references_dir")
+
+    _require_existing_file_if_not_none(input_attribute.get("default_reference").get("path"), "input_files.minimap2.default_reference_filename")
+    _require_existing_file_if_not_none(input_attribute.get("default_index").get("path"), "input_files.minimap2.default_index_filename")
 
     reference_path = Path(input_attribute.get("references_dir"))
-    minimap2 = input_files.get("minimap2")
 
     multi_reference_key = "multi_reference_filename"
     _validate_multi(minimap2.get(multi_reference_key), multi_reference_key, reference_path)
@@ -90,6 +65,7 @@ def validate_paths(config):
     _validate_multi(minimap2.get(multi_index_key), multi_index_key, reference_path)
 
     kraken2_database = input_files.get("kraken2").get("database")
-    _validate_kraken2_database(kraken2_database.get("path"), "input_files.kraken2.database.path")
+    _require_existing_directory_if_not_none(kraken2_database.get("path"), "input_files.kraken2.database.path")
 
-    _validate_cuda_script_path(input_files.get("cuda_script_path"), "input_files.cuda_script_path")
+    dorado_archive_path = input_files.get("dorado").get("archive").get("path")
+    _require_existing_directory_if_not_none(dorado_archive_path, "input_files.dorado.archive.path")
