@@ -8,12 +8,12 @@ validate_paths(config)
 include: "rules/setup.smk"
 if config["input_files"]["data"]["type"] == "ONT":
     include: "rules/validate_ONT_input.smk"
-    if config["input_files"]["dorado"]["archive"]["path"] is None:
-        include: "rules/install_dorado.smk"
     include: "rules/dorado.smk"
 if config["input_files"]["data"]["type"] == "PacBio":
     include: "rules/validate_PacBio_input.smk"
     include: "rules/fibertools_predict.smk"
+if config["input_files"]["dorado"]["archive"]["path"] is None:
+    include: "rules/install_dorado.smk"
 include: "rules/bam_to_fastq_gz.smk"
 include: "rules/sequali.smk"
 if config["input_files"]["kraken2"]["database"]["path"] is None:
