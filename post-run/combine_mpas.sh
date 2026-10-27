@@ -43,6 +43,8 @@ fi
 
 DEST_DIR="$(mktemp -d "${SCRIPT_DIR}/results/combined_mpas_XXXXXXXX")"
 
+echo "Combining reports..."
+
 conda run -p "$ENV_PATH" combine_mpa.py \
     -i "${mpa_files[@]}" \
     -o "$DEST_DIR/all_combined_report.kreports.mpa"

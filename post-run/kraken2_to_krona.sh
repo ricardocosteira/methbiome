@@ -48,7 +48,7 @@ fi
 OUTPUT_DIR="$(mktemp -d "${SCRIPT_DIR}/results/krona_XXXXXXXX")"
 KRONA_HTML="${OUTPUT_DIR}/multi-krona.html"
 
-echo "Generating Krona plot from ${#reports[@]} report(s)..."
+echo "Generating Krona plot..."
 conda run --prefix "$ENV_PATH" ktImportTaxonomy \
     -t 5 -m 3 \
     -o "$KRONA_HTML" \
