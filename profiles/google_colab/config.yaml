@@ -2,7 +2,7 @@
 # See https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles for documentation on profiles.
 
 executor: local
-jobs: 4
+jobs: 1
 
 software-deployment-method:
   - conda
