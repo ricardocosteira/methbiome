@@ -52,7 +52,6 @@ tool_specific_params: # Parameters used by the tools themselves
         mapping_quality: 20
         max_target_bases: null # E.g. 1G, 500M. If null this parameter will be ignored. See -I option from minimap2.
         minimum_window_size: null # Integer or null. If null this parameter will be ignored. See -w option from minimap2.
-        split-prefix: False # True or False. See --split-prefix option from minimap2.
     modkit:
         minimum_methylation_likelihood: 0.8 # filter-threshold in modkit
 
