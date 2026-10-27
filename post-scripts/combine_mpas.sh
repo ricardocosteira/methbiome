@@ -1,8 +1,14 @@
 #!/bin/bash
+set -euo pipefail
+
 DEST_DIR="$(dirname $0)/combined_mpas_$(date +%s)" # Add Unix epoch to make unique
 ENV_PATH="$(dirname $0)/.conda/krakentools"
 
-set -euo pipefail
+if ! command -v conda >/dev/null 2>&1; then
+    echo "Error: conda was not found. Install Miniconda or Anaconda first." >&2
+    exit 1
+fi
+
 if [ "$#" -eq 0 ]; then
     echo "Usage: $0 <directory1> <directory2> ..."
     exit 1
@@ -38,4 +44,4 @@ conda run -p "$ENV_PATH" bash -c "
     combine_mpa.py -i ./*.mpa -o 'all_combined_report.kreports.mpa'
 "
 
-echo "Done!"
+echo "Done! Reports saved to "$DEST_DIR"

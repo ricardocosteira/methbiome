@@ -1,6 +1,13 @@
 #!/bin/bash
+set -euo pipefail
+
 DEST_DIR="$(dirname $0)/combined_multiqc_$(date +%s)"
 ENV_PATH="$(dirname $0)/.conda/multiqc"
+
+if ! command -v conda >/dev/null 2>&1; then
+    echo "Error: conda was not found. Install Miniconda or Anaconda first." >&2
+    exit 1
+fi
 
 set -euo pipefail
 if [ "$#" -eq 0 ]; then
@@ -38,4 +45,4 @@ conda run -p "$ENV_PATH" bash -c "
     multiqc .
 "
 
-echo "Done!"
+echo "Done! MultiQC saved to "$DEST_DIR"
