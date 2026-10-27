@@ -1,0 +1,59 @@
+# Profile for local execution
+# See https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles for documentation on profiles.
+
+executor: local
+jobs: 4
+
+software-deployment-method:
+  - conda
+
+default-resources:
+  mem_mb: 10000
+  runtime: 30
+
+set-threads:
+  dorado: 4
+  fibertools_predict: 1
+  sequali: 1
+  kraken2: 1
+  bam_to_fastq_gz: 1
+  minimap2: 1
+  filter_samtools: 1
+  modkit: 1
+
+set-resources:
+  dorado:
+    mem_mb: 10000
+    runtime: 30
+
+  fibertools_predict:
+    mem_mb: 10000
+    runtime: 30
+
+  sequali:
+    mem_mb: 10000
+    runtime: 30
+
+  kraken2:
+    mem_mb: 10000
+    runtime: 30
+
+  bam_to_fastq_gz:
+    mem_mb: 10000
+    runtime: 30
+
+  minimap2:
+    mem_mb: 10000
+    runtime: 30
+
+  filter_samtools:
+    mem_mb: 10000
+    runtime: 30
+
+  modkit:
+    mem_mb: 10000
+    runtime: 30
+
+  tabix:
+    mem_mb: 10000
+    runtime: 30
