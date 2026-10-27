@@ -34,6 +34,14 @@ if [[ ! -d "$ENV_PATH" ]]; then
         -y
 fi
 
-echo "Generating methylation plot..."
-conda run --prefix "$ENV_PATH" \
-    python "$SCRIPT_PATH" "$@"
+OUTPUT_DIR="$(mktemp -d "${SCRIPT_DIR}/bedmethyl_plot_XXXXXXXX")"
+INPUT_FILE="$(cd -- "$(dirname -- "$1")" && pwd)/$(basename -- "$1")"
+
+echo "Generating methylation plot in: $OUTPUT_DIR"
+(
+    cd "$OUTPUT_DIR"
+    conda run --prefix "$ENV_PATH" \
+        python "$SCRIPT_PATH" "$INPUT_FILE" "${@:2}"
+)
+
+echo "Done! Output saved to: $OUTPUT_DIR"
