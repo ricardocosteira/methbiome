@@ -41,7 +41,7 @@ if [[ ! -d "$ENV_PATH" ]]; then
         -c conda-forge -c bioconda krakentools=1.2.1 -y
 fi
 
-DEST_DIR="$(mktemp -d "${SCRIPT_DIR}/combined_mpas_XXXXXXXX")"
+DEST_DIR="$(mktemp -d "${SCRIPT_DIR}/results/combined_mpas_XXXXXXXX")"
 
 conda run -p "$ENV_PATH" combine_mpa.py \
     -i "${mpa_files[@]}" \

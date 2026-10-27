@@ -27,7 +27,7 @@ if [[ ! -d "$ENV_PATH" ]]; then
         -c conda-forge -c bioconda multiqc=1.33 -y
 fi
 
-DEST_DIR="$(mktemp -d "${SCRIPT_DIR}/combined_multiqc_XXXXXXXX")"
+DEST_DIR="$(mktemp -d "${SCRIPT_DIR}/results/combined_multiqc_XXXXXXXX")"
 
 echo "Running MultiQC on supplied directories"
 conda run -p "$ENV_PATH" multiqc "$@" --outdir "$DEST_DIR"
