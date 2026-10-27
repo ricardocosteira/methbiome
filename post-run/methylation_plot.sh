@@ -4,6 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_PATH="${SCRIPT_DIR}/common/plot_bedmethyl.py"
 ENV_PATH="${SCRIPT_DIR}/.conda/bedmethyl-plot"
+OUTPUT_DIR="${SCRIPT_DIR}/results"
 
 if ! command -v conda >/dev/null 2>&1; then
     echo "Error: conda was not found. Install Miniconda or Anaconda first." >&2
@@ -11,7 +12,7 @@ if ! command -v conda >/dev/null 2>&1; then
 fi
 
 if (( $# < 4 )); then
-    echo "Usage: $0 <file.bed.gz> <contig> <start> <end> [--sample-name NAME]" >&2
+    echo "Usage: $0 <file.bed.gz> <contig> <start> <end> [sample_name] [--modifications 6mA 5mC 4mC]" >&2
     exit 1
 fi
 
@@ -34,14 +35,11 @@ if [[ ! -d "$ENV_PATH" ]]; then
         -y
 fi
 
-OUTPUT_DIR="$(mktemp -d "${SCRIPT_DIR}/bedmethyl_plot_XXXXXXXX")"
 INPUT_FILE="$(cd -- "$(dirname -- "$1")" && pwd)/$(basename -- "$1")"
 
-echo "Generating methylation plot in: $OUTPUT_DIR"
+echo "Generating methylation plot..."
 (
     cd "$OUTPUT_DIR"
     conda run --prefix "$ENV_PATH" \
         python "$SCRIPT_PATH" "$INPUT_FILE" "${@:2}"
 )
-
-echo "Done! Output saved to: $OUTPUT_DIR"
