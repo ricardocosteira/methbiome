@@ -73,26 +73,31 @@ rule filter_samtools:
                 sort_flagstat="$filename_without_extension.sort.flagstat"
                 sort_coverage="$filename_without_extension.sort.coverage"
 
-                samtools_view_command='samtools view -h -q "{params.mapping_quality}" -b -@ "$(getconf _NPROCESSORS_ONLN)"'
-                if [ "$matched_index_path" != 'None' ]
-                then
-                    samtools_view_command+=' -t "$matched_index_path"'
+                samtools_view_extra_args=()
+                samtools_flagstat_extra_args=()
+
+                if [ "$matched_index_path" != 'None' ]; then
+                    samtools_view_extra_args+=(-t "$matched_index_path")
+                    samtools_flagstat_extra_args+=(--input-fmt-option "reference=$matched_index_path")
                 fi
-                samtools_view_command+=' "$sam" | samtools sort -@ "$(getconf _NPROCESSORS_ONLN)" -o "{output}/$sort_bam"'
-                
-                samtools_flagstat_command='samtools flagstat -@ "$(getconf _NPROCESSORS_ONLN)"'
-                if [ "$matched_index_path" != 'None' ]
-                then
-                    samtools_flagstat_command+=' --input-fmt-option reference="$matched_index_path"'
-                fi
-                samtools_flagstat_command+=' "$sam" > "{output}/$flagstat"'
-                
-                eval "$samtools_view_command"
-                samtools index -@ "$(getconf _NPROCESSORS_ONLN)" -o "{output}/$sort_bai" "{output}/$sort_bam"
-                eval "$samtools_flagstat_command"
-                samtools flagstat -@ "$(getconf _NPROCESSORS_ONLN)" "{output}/$sort_bam" > "{output}/$sort_flagstat"
+
+                samtools view -h -q "{params.mapping_quality}" -b \
+                    -@ "$(getconf _NPROCESSORS_ONLN)" \
+                    "${samtools_view_extra_args[@]}" "$sam" |
+                    samtools sort -@ "$(getconf _NPROCESSORS_ONLN)" \
+                        -o "{output}/$sort_bam"
+
+                samtools index -@ "$(getconf _NPROCESSORS_ONLN)" \
+                    -o "{output}/$sort_bai" "{output}/$sort_bam"
+
+                samtools flagstat -@ "$(getconf _NPROCESSORS_ONLN)" \
+                    "${samtools_flagstat_extra_args[@]}" "$sam" \
+                    > "{output}/$flagstat"
+
+                samtools flagstat -@ "$(getconf _NPROCESSORS_ONLN)" \
+                    "{output}/$sort_bam" > "{output}/$sort_flagstat"
+
                 samtools coverage "{output}/$sort_bam" > "{output}/$sort_coverage"
-                
             done
         }} &> '{log}'
         """     
