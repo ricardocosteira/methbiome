@@ -36,7 +36,7 @@
 
 ### A. SLURM Profile
 
-This pipeline was built for execution with SLURM but can be easily adapted to other environments. To do so, you can edit [`environment/config.yaml`](environment/config.yaml).
+This pipeline was built for execution with SLURM but can be easily adapted to other environments. To do so, you can edit [`profiles/config.yaml`](profiles/config.yaml).
 
 ### B. CUDA
 
@@ -74,7 +74,7 @@ git clone https://github.com/ricardocosteira/methbiome
 
 - Place each ONT or PacBio sample in a subdirectory in `resources/data`. Please avoid naming it with spaces and special characters (other than '-' and '_').
 - For each sample you want to process make a copy of [`config/config.yaml`](config/config.yaml) in `config/` and set any relevant parameters.
-- For environment specific configuration like job resources, edit [`environment/config.yaml`](environment/config.yaml).
+- For environment specific configuration like job resources, edit [`profiles/config.yaml`](profiles/config.yaml).
 
 ### C. Pipeline Execution
 
@@ -83,7 +83,7 @@ git clone https://github.com/ricardocosteira/methbiome
 Dependencies have to be installed first for parallel processing of samples. This has to be done before processing any sample!
 
 ```bash
-snakemake setup --profile environment/slurm --configfile config/config.yaml
+snakemake setup --profile profiles/{slurm or local} --configfile config/config.yaml
 ```
 
 
@@ -94,7 +94,7 @@ For each sample follow these steps.
 Open a tmux session so that Snakemake can continue running in the background. Then, run the following command with the relevant configuration file.
 
 ```bash
-snakemake --profile environment/slurm --configfile config/sample1_config.yaml
+snakemake --profile profiles/slurm --configfile config/sample1_config.yaml
 ```
 
 #### 4. Execution of Part of the Pipeline
@@ -104,7 +104,7 @@ Open a tmux session so that Snakemake can continue running in the background. Th
 This will run the pipeline up to the rule named `rule_name`, meaning that all rules on which `rule_name` depends are also executed.
 
 ```bash
-snakemake rule_name --profile environment/slurm --configfile config/sample1_config.yaml
+snakemake rule_name --profile profiles/slurm --configfile config/sample1_config.yaml
 ```
 
 ### D. Post-scripts
