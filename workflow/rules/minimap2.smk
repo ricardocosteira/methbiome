@@ -9,7 +9,9 @@ rule minimap2:
         data_type=config["input_files"]["data"]["type"],
         default_reference_path=config["input"]["default_reference"]["path"],
         reference_map=None if config["input_files"]["minimap2"]["multi_reference_filename"] is None else lambda w: " ".join(f"{k}:{v}" for k, v in config["input_files"]["minimap2"]["multi_reference_filename"].items()),
-        parent_directory=config["input"]["references_dir"]
+        parent_directory=config["input"]["references_dir"],
+        max_target_bases=config["tool_specific_params"]["minimap2"]["max_target_bases"],
+        minimum_window_size=config["tool_specific_params"]["minimap2"]["minimum_window_size"]
     log:
         config["logs"]["minimap2"]
     shell:
@@ -31,10 +33,18 @@ rule minimap2:
                 filename_with_extension="$(basename "$uBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
 
+                extra_args=()
+                if [ '{params.max_target_bases}' != 'None' ]; then
+                    extra_args+=(-I '{params.max_target_bases}')
+                fi
+                if [ '{params.minimum_window_size}' != 'None' ]; then
+                    extra_args+=(-w '{params.minimum_window_size}')
+                fi
+
                 matched_reference_path="$(get_matched_value "$filename_without_extension" '{params.reference_map}' '{params.parent_directory}' '{params.default_reference_path}')"
 
                 samtools fastq -TMM,ML "$uBAM" | \
-                minimap2 -ax "$map_type" -t "$(getconf _NPROCESSORS_ONLN)" -y --secondary=no "$matched_reference_path" - > "{output}/$filename_without_extension.sam"
+                minimap2 "${{extra_args[@]+"${{extra_args[@]}}"}}" -ax "$map_type" -t "$(getconf _NPROCESSORS_ONLN)" -y --secondary=no "$matched_reference_path" - > "{output}/$filename_without_extension.sam"
             done
         }} &> '{log}'
         """
@@ -83,7 +93,7 @@ rule filter_samtools:
 
                 samtools view -h -q "{params.mapping_quality}" -b \
                     -@ "$(getconf _NPROCESSORS_ONLN)" \
-                    "${samtools_view_extra_args[@]}" "$sam" |
+                    "${{samtools_view_extra_args[@]+"${{samtools_view_extra_args[@]}}"}}" "$sam" |
                     samtools sort -@ "$(getconf _NPROCESSORS_ONLN)" \
                         -o "{output}/$sort_bam"
 
@@ -91,7 +101,7 @@ rule filter_samtools:
                     -o "{output}/$sort_bai" "{output}/$sort_bam"
 
                 samtools flagstat -@ "$(getconf _NPROCESSORS_ONLN)" \
-                    "${samtools_flagstat_extra_args[@]}" "$sam" \
+                    "${{samtools_flagstat_extra_args[@]+"${{samtools_flagstat_extra_args[@]}}"}}" "$sam" \
                     > "{output}/$flagstat"
 
                 samtools flagstat -@ "$(getconf _NPROCESSORS_ONLN)" \
@@ -100,4 +110,4 @@ rule filter_samtools:
                 samtools coverage "{output}/$sort_bam" > "{output}/$sort_coverage"
             done
         }} &> '{log}'
-        """     
+        """

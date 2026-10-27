@@ -195,9 +195,23 @@ properties:
         additionalProperties: false
         required:
           - mapping_quality
+          - max_target_bases
+          - minimum_window_size
         properties:
           mapping_quality:
             type: integer
+            minimum: 0
+
+          max_target_bases:
+            type:
+              - string
+              - "null"
+            pattern: '^[0-9]+[cwbkMG]$'
+
+          minimum_window_size:
+            type:
+              - integer
+              - "null"
             minimum: 0
 
       modkit:
