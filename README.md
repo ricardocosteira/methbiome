@@ -23,7 +23,6 @@
     - [A. Miniforge](#a-miniforge)
     - [B. Snakemake](#b-snakemake)
     - [C. Slurm Plugin](#c-slurm-plugin)
-    - [D. What Happens On The First Run](#d-what-happens-on-the-first-run)
   - [IV. Usage](#iv-usage)
     - [A. Download methbiome](#a-download-methbiome)
     - [B. Configuration](#b-configuration)
@@ -49,7 +48,7 @@ You can try methbiome by running the [Google Colab notebook](https://colab.resea
 
 The pipeline was tested using publicly available data for the ZymoBIOMICS D6323 fecal microbiome standard. ONT POD5s available at https://epi2me.nanoporetech.com/zymo_fecal_2025.05/. PacBio BAMs available at https://www.pacb.com/connect/datasets/.
 
-Smaller datasets that can be run on a laptop are available [here](https://drive.google.com/drive/folders/1YiXczjeheY9dg6TtVhGydqKJDlDBXjtT)
+Smaller datasets that can be run on a laptop are available [here](https://drive.google.com/drive/folders/1YiXczjeheY9dg6TtVhGydqKJDlDBXjtT).
 
 ## II. Environment Dependencies
 
@@ -95,7 +94,7 @@ You do not have to install any of the tools methbiome uses, as it automatically 
 | Installed by | What |
 | --- | --- |
 | **You**, once, before starting | `conda`, `snakemake`, the SLURM executor plugin if you run on SLURM. |
-| **Snakemake**, automatically, on the first run | dorado, fibertools-rs, kraken2... |
+| **Snakemake**, automatically, on the first run | dorado, fibertools-rs, kraken2, ... |
 
 
 ### A. Miniforge
@@ -115,12 +114,6 @@ pip install snakemake-executor-plugin-slurm
 ```
 
 Install it into the same environment `snakemake` itself lives in.
-
-### D. What Happens On The First Run
-
-The first rule that needs a tool triggers the environment build: Snakemake resolves `workflow/envs/main.yaml`, downloads the packages and caches the result under `.snakemake/conda/`. This happens before any analysis, so expect the first command to spend a while downloading, and allow a few gigabytes of disk space for the cache. All rules share this one environment and the cache is reused by every later run, so you pay the cost once per copy of the project rather than once per run.
-
-The packages are downloaded again if the environment is ever rebuilt, for example after you change `workflow/envs/main.yaml` or move the project to another directory or machine. Delete `.snakemake/conda/` to start from a clean slate.
 
 ## IV. Usage
 
