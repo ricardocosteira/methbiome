@@ -8,6 +8,7 @@ input_files:
             path: run1 # Input to directory containing either ONT POD5 or PacBio BAM (avoid trailing '/')
             custom_path: True # Directory not in resources/data? True or False
         type: ONT # ONT or PacBio
+        basecalled: False # True if the directory above already holds basecalled BAMs with modification calls. Skips Dorado (ONT) or fibertools-rs (PacBio), so the BAMs are used as they are.
     minimap2:
         custom_references_dir: null # If null, we expect references and indices to be resources/data. Otherwise we expect them to be in the designated directory (avoid trailing '/').
         default_reference_filename: genomes.fna
@@ -64,6 +65,7 @@ __variables__:
     results_dir: ?f"results/{output_name}"
     logs_dir: logs/rules
     sample_logs_dir: ?f"{logs_dir}/{output_name}"
+    data_dir: ?this["input_files"]["data"]["dir"]["path"] if this["input_files"]["data"]["dir"]["custom_path"] else f"{resources_dir}/data/" + this["input_files"]["data"]["dir"]["path"]
 
 resources:
     input_validation: ?f"{results_dir}/input_validation.ok"
@@ -77,7 +79,7 @@ resources:
 
 results:
     dorado_intermediate_bam_path: ?f"{results_dir}/{output_name}.bam"
-    bam_dir: ?f"{results_dir}/{output_name}_bam"
+    bam_dir: ?data_dir if this["input_files"]["data"]["basecalled"] else f"{results_dir}/{output_name}_bam" # With basecalled input the user's own directory is the BAM directory, so no rule produces it.
     dorado_invalid_dir: ?f"{results_dir}/{output_name}_bam_invalid"
     fastq_gz_dir: ?f"{results_dir}/{output_name}_fastq_gz"
     qc:
@@ -97,7 +99,7 @@ results:
 input:
     assets_dir: ?f"{assets_dir}"
     references_dir: ?f"{resources_dir}/references" if this["input_files"]["minimap2"]["custom_references_dir"] is None else this["input_files"]["minimap2"]["custom_references_dir"]
-    data_dir: ?this["input_files"]["data"]["dir"]["path"] if this["input_files"]["data"]["dir"]["custom_path"] else f"{resources_dir}/data/" + this["input_files"]["data"]["dir"]["path"]
+    data_dir: ?data_dir
     default_reference:
         path: ?this["input"]["references_dir"] + "/" + this["input_files"]["minimap2"]["default_reference_filename"]
     default_index:

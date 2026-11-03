@@ -23,6 +23,7 @@ properties:
         required:
           - dir
           - type
+          - basecalled
         properties:
           dir:
             type: object
@@ -42,6 +43,9 @@ properties:
             enum:
               - ONT
               - PacBio
+
+          basecalled:
+            type: boolean
 
       minimap2:
         type: object

@@ -5,12 +5,17 @@ from scripts.validate_config_paths import validate_paths
 validate(config, "../config/schema/config.schema.yaml")
 validate_paths(config)
 
+data_type = config["input_files"]["data"]["type"]
+basecalled = config["input_files"]["data"]["basecalled"]
+
 include: "rules/setup.smk"
-if config["input_files"]["data"]["type"] == "ONT":
-    include: "rules/validate_ONT_input.smk"
+if basecalled:
+    include: "rules/validate_bam_input.smk"
+elif data_type == "ONT":
+    include: "rules/validate_pod5_input.smk"
     include: "rules/dorado.smk"
-if config["input_files"]["data"]["type"] == "PacBio":
-    include: "rules/validate_PacBio_input.smk"
+elif data_type == "PacBio":
+    include: "rules/validate_bam_input.smk"
     include: "rules/fibertools_predict.smk"
 if config["input_files"]["dorado"]["archive"]["path"] is None:
     include: "rules/install_dorado.smk"
@@ -23,7 +28,8 @@ include: "rules/minimap2.smk"
 include: "rules/modkit.smk"
 
 outputs = [
-    config["results"]["bam_dir"],
+    # With basecalled input, results.bam_dir is a directory from the user that we want to validate
+    config["resources"]["input_validation"] if basecalled else config["results"]["bam_dir"],
     config["results"]["fastq_gz_dir"],
     config["results"]["kraken2"]["dir"],
     config["results"]["qc"]["sequali"]["dir"],

@@ -1,4 +1,4 @@
-rule validate_PacBio_input:
+rule validate_bam_input:
     localrule: True
     input:
         config["input"]["data_dir"]

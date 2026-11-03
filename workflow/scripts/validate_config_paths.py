@@ -20,17 +20,40 @@ def _require_existing_directory_if_not_none(dirname, name):
             _fail(f"Directory configured by '{name}' does not exist: {path}")
 
 
-def _contains_appropriate_file(dir, type, key_name):
-    required_extension = "pod5" if type == "ONT" else "bam"
-    _directory_contains_appropriate_file(dir, required_extension, key_name)
+def _contains_appropriate_file(dir, type, basecalled, key_name):
+    if basecalled:
+        _directory_contains_appropriate_file(
+            dir,
+            "bam",
+            key_name,
+            "input_files.data.basecalled is true, so the directory must already hold basecalled "
+            ".bam files, whatever input_files.data.type is",
+        )
+    elif type == "PacBio":
+        _directory_contains_appropriate_file(
+            dir,
+            "bam",
+            key_name,
+            "input_files.data.type is PacBio, and a PacBio run always reads the run's .bam files "
+            "from this directory",
+        )
+    else:
+        _directory_contains_appropriate_file(
+            dir,
+            "pod5",
+            key_name,
+            "input_files.data.type is ONT and input_files.data.basecalled is false, so the "
+            "directory must hold the .pod5 files that Dorado basecalls. Set "
+            "input_files.data.basecalled to true to use basecalled .bam files instead",
+        )
 
 
-def _directory_contains_appropriate_file(dir, file_extension, key_name):
+def _directory_contains_appropriate_file(dir, file_extension, key_name, reason):
     path = Path(dir)
     if not any(candidate.is_file() for candidate in path.glob(f"*.{file_extension}")):
         _fail(
             f"Directory configured by '{key_name}' contains no "
-            f"{file_extension} files: {path}"
+            f"{file_extension} files: {path}. {reason}"
         )
 
 
@@ -47,9 +70,15 @@ def validate_paths(config):
     input_attribute = config.get("input")
     input_files = config.get("input_files")
 
+    data = input_files.get("data")
     data_dir = input_attribute.get("data_dir")
     _require_existing_directory_if_not_none(data_dir, "input_files.data.dir")
-    _contains_appropriate_file(data_dir, input_files.get("data").get("type"), "input_files.data.dir")
+    _contains_appropriate_file(
+        data_dir,
+        data.get("type"),
+        data.get("basecalled"),
+        "input_files.data.dir",
+    )
 
     minimap2 = input_files.get("minimap2")
     _require_existing_directory_if_not_none(minimap2.get("custom_references_dir"), "input_files.minimap2.custom_references_dir")

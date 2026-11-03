@@ -1,4 +1,4 @@
-rule validate_ONT_input:
+rule validate_pod5_input:
     localrule: True
     input:
         config["input"]["data_dir"]
