@@ -8,7 +8,8 @@ input_files:
             path: run1 # Input to directory containing either ONT POD5 or PacBio BAM (avoid trailing '/')
             custom_path: True # Directory not in resources/data? True or False
         type: ONT # ONT or PacBio
-        basecalled: False # True if the directory above already holds basecalled BAMs with modification calls. Skips Dorado (ONT) or fibertools-rs (PacBio), so the BAMs are used as they are.
+        basecalled: False # True if the directory above already holds basecalled BAMs with modification calls. Skips Dorado (ONT) and fibertools-rs (PacBio), so those BAMs are used as they are and no '<output_name>_bam' directory is produced.
+            # All tool_specific_params.dorado values are then unused.
     minimap2:
         custom_references_dir: null # If null, we expect references and indices to be resources/data. Otherwise we expect them to be in the designated directory (avoid trailing '/').
         default_reference_filename: genomes.fna

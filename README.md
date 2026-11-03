@@ -17,8 +17,8 @@
   - [II. Environment Dependencies](#ii-environment-dependencies)
     - [A. Operating Systems](#a-operating-systems)
     - [B. Execution Profiles](#b-execution-profiles)
-    - [C. Dorado](#c-dorado)
-    - [D. Kraken2 Database](#d-kraken2-database)
+    - [C. Using a Custom Dorado Build](#c-using-a-custom-dorado-build)
+    - [D. Using a Custom Kraken2 Database](#d-using-a-custom-kraken2-database)
   - [III. Set Up](#iii-set-up)
     - [A. Miniforge](#a-miniforge)
     - [B. Snakemake](#b-snakemake)
@@ -26,6 +26,8 @@
   - [IV. Usage](#iv-usage)
     - [A. Download methbiome](#a-download-methbiome)
     - [B. Configuration](#b-configuration)
+      - [1. Data That Is Already Basecalled](#1-data-that-is-already-basecalled)
+      - [2. Multi-Reference Mapping](#2-multi-reference-mapping)
     - [C. Pipeline Execution](#c-pipeline-execution)
       - [1. Parallel Processing Set Up](#1-parallel-processing-set-up)
       - [2. Execution of the Entire Pipeline](#2-execution-of-the-entire-pipeline)
@@ -68,9 +70,9 @@ Three Snakemake profiles are provided in [`profiles/`](profiles):
 
 Each profile sets the executor, the number of parallel jobs, software deployment (conda) and the per-rule resources (partition, memory, CPUs, runtime). Pick one with `--profile profiles/<name>`. To support another scheduler, copy a profile and edit the copy: [`profiles/slurm/config.yaml`](profiles/slurm/config.yaml) links to some documentation.
 
-### C. Dorado
+### C. Using a Custom Dorado Build
 
-Dorado is not installed with conda. If `input_files.dorado.archive.path` is `null` in your configuration file, the `install_dorado` rule downloads the **Linux x64** build. This happens even for a PacBio run, so set the path to any unpacked Dorado if you do not want that download.
+Dorado is not installed with conda. If `input_files.dorado.archive.path` is `null` in your configuration file, the `install_dorado` rule downloads dorado-1.3.1-linux-x64. This happens even for a PacBio run, so set the path to any unpacked Dorado if you do not want that download. A run with `input_files.data.basecalled` set to `true` never calls Dorado either, but it is still provisioned by `snakemake setup`.
 
 For any other platform, download Dorado yourself from [Oxford Nanopore](https://dorado-docs.readthedocs.io/en/latest/), unpack it, and set `input_files.dorado.archive.path` to the unpacked directory. The pipeline expects the binary at `<that directory>/bin/dorado`. For example, on an Apple Silicon Mac:
 
@@ -81,7 +83,7 @@ input_files:
             path: /path/to/dorado-2.1.1-osx-arm64
 ```
 
-### D. Kraken2 Database
+### D. Using a Custom Kraken2 Database
 
 If `input_files.kraken2.database.path` is `null`, the `install_kraken2_db` rule downloads the latest Kraken2 **Standard** database into `resources/assets/Kraken2DB`.
 
@@ -97,15 +99,31 @@ You do not have to install any of the tools methbiome uses, as it automatically 
 | **Snakemake**, automatically, on the first run | dorado, fibertools-rs, kraken2, ... |
 
 
-### A. Miniforge
+### A. Install Miniforge
 
-Install [miniforge](https://conda-forge.org/download). It provides the `conda` command Snakemake uses to build the tool environment, so make sure `conda` is on your `PATH` on the machine you launch Snakemake from — on SLURM that is the login node, not the compute node.
+Install [miniforge](https://conda-forge.org/download). It provides the `conda` command needed to install Snakemake and used to build the tool environment.
 
-### B. Snakemake
+### B. Install Snakemake
 
-See [Snakemake installation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html). Snakemake needs to be installed with conda, or in a Python environment that can reach `conda`, so that it can deploy the tools for you.
+Install Snakemake v9.27.1:
+```bash
+conda create -y \
+  -c conda-forge \
+  -c bioconda \
+  -c nodefaults \
+  -n snakemake \
+  snakemake=9.27.1
+```
 
-### C. Slurm Plugin
+Then, activate the environment and check that Snakemake was successfully installed:
+```bash
+conda activate snakemake
+snakemake --help
+```
+
+See [Snakemake installation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) for more information.
+
+### C. Install Slurm Plugin
 
 Only needed when you execute on SLURM:
 
@@ -126,6 +144,7 @@ git clone https://github.com/ricardocosteira/methbiome
 ### B. Configuration
 
 One configuration file describes **one run**, which is one directory of ONT POD5 files or one directory of PacBio BAM files.
+To run several samples, write one configuration file per sample. They can all be processed in parallel; see [Parallel Processing Set Up](#1-parallel-processing-set-up).
 
 1. Make a copy of [`config/template.yaml`](config/template.yaml) in `config/` and name it after the run, for example `config/run1.yaml`. Do not edit `config/template.yaml` itself, so that it stays available as a template.
 2. Set the values listed below. Before any rule runs, `snakemake` validates the file against [`config/schema/config.schema.yaml`](config/schema/config.schema.yaml) and checks that every path and file you point at exists, so a typo is reported straight away.
@@ -135,6 +154,7 @@ One configuration file describes **one run**, which is one directory of ONT POD5
 | `input_files.data.dir.path` | path, no trailing `/` | Directory of the run's `.pod5` or `.bam` files. |
 | `input_files.data.dir.custom_path` | `true` / `false` | Use the path as-is, or under `resources/data`. |
 | `input_files.data.type` | `ONT` / `PacBio` | Platform of the input. |
+| `input_files.data.basecalled` | `true` / `false` | Whether the directory already holds basecalled BAMs. |
 | `input_files.minimap2.custom_references_dir` | path / `null` | Where references and indices live; `null` uses `resources/references`. |
 | `input_files.minimap2.default_reference_filename` | `*.fasta` / `*.fna` | Reference for the whole run. |
 | `input_files.minimap2.default_index_filename` | `*.fai` / `null` | Reference index, needed above 4 GB; `null` if there is none. |
@@ -155,11 +175,15 @@ One configuration file describes **one run**, which is one directory of ONT POD5
 | `tool_specific_params.minimap2.minimum_window_size` | integer / `null` | minimap2 `-w`. |
 | `tool_specific_params.modkit.minimum_methylation_likelihood` | `0` to `1` | modkit `--filter-threshold`. |
 
-Multi-reference mapping is for a run whose barcodes or samples belong to different genomes: list them in `multi_reference_filename` as `name: file` pairs, where `name` is a string to find in the input file name and `file` is a reference in the references directory, and give their `.fai` files in `multi_index_filename`. Any input matching no name is mapped to the default reference and index.
-
 The section below those keys in `config/template.yaml` is generated from them. Do not edit it.
 
-To run several samples, write one configuration file per sample. They can all be processed in parallel; see [Parallel Processing Set Up](#1-parallel-processing-set-up).
+#### 1. Data That Is Already Basecalled
+
+`input_files.data.basecalled` is `false` by default, which means methbiome produces the BAMs itself using Dorado or Fibertools. However, if it true, the basecalling step is skipped and the BAM files in `input_files.data.dir.path` are used as input for the downstream rules.
+
+#### 2. Multi-Reference Mapping
+
+Multi-reference mapping is for a run whose barcodes or samples belong to different genomes: list them in `multi_reference_filename` as `name: file` pairs, where `name` is a string to find in the input file name and `file` is a reference in the references directory, and give their `.fai` files in `multi_index_filename`. Any input matching no name is mapped to the default reference and index.
 
 ### C. Pipeline Execution
 
@@ -199,7 +223,7 @@ The results from the pipeline are written to `results/<output_name>/`, and the l
 
 | Directory | Contents |
 | --- | --- |
-| `<output_name>_bam/` | Basecalled BAMs with modified-base tags (ONT) or BAMs with kinetic modifications called (PacBio). |
+| `<output_name>_bam/` | Basecalled BAMs with modified-base tags (ONT) or BAMs with kinetic modifications called (PacBio). Not created when `basecalled: true`, because the run's own BAM directory is used instead. |
 | `<output_name>_bam_invalid/` | Barcodes discarded by Dorado demultiplexing, if enabled. |
 | `<output_name>_fastq_gz/` | Basecalled reads as compressed FASTQ. |
 | `sequali_<output_name>/` | Sequali quality reports, one `.html` and one `.json` per input file. |
