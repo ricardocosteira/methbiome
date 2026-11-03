@@ -20,6 +20,7 @@ set-threads:
   minimap2: 1
   filter_samtools: 1
   modkit: 1
+  tabix: 1
 
 set-resources:
   dorado:
