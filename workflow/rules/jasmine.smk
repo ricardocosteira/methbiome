@@ -1,4 +1,4 @@
-rule fibertools_predict:
+rule jasmine:
     input:
         data=config["input"]["data_dir"],
         validation=config["resources"]["input_validation"]
@@ -7,7 +7,7 @@ rule fibertools_predict:
     conda:
         "../envs/main.yaml"
     log:
-        config["logs"]["fibertools_predict"]
+        config["logs"]["jasmine"]
     shell:
         """
         {{
@@ -18,9 +18,14 @@ rule fibertools_predict:
                                 
                 filename_with_extension="$(basename "$uBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
-                
-                ft predict-m6a --keep -t "$(getconf _NPROCESSORS_ONLN)" -v "$uBAM" "{output}/$filename_without_extension.bam"
+                intermediate_bam="{output}/$filename_without_extension.cln.bam"
+                basecalled_bam="{output}/$filename_without_extension.jasmine.bam"
+
+                samtools view -x MM,ML -O BAM -o "$intermediate_bam" "$uBAM"
+
+                jasmine --num-threads "$(getconf _NPROCESSORS_ONLN)" \
+                    --keep-kinetics \
+                    "$intermediate_bam" "$basecalled_bam"
             done
         }} &> '{log}'
-
         """

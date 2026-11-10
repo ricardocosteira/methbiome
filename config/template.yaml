@@ -110,7 +110,7 @@ logs:
     input_validation: ?f"{sample_logs_dir}/input_validation.out"
     install_dorado: ?f"{sample_logs_dir}/install_dorado.out"
     dorado: ?f"{sample_logs_dir}/dorado_{output_name}.out"
-    fibertools_predict: ?f"{sample_logs_dir}/fibertools_predict_{output_name}.out"
+    jasmine: ?f"{sample_logs_dir}/jasmine_{output_name}.out"
     bam_to_fastq_gz: ?f"{sample_logs_dir}/bam_to_fastq_gz{output_name}.out"
     sequali: ?f"{sample_logs_dir}/sequali_{output_name}.out"
     install_kraken2_db: ?f"{sample_logs_dir}/install_kraken2_db.out"

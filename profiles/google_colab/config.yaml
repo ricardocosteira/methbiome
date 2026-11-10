@@ -13,7 +13,7 @@ default-resources:
 
 set-threads:
   dorado: 4
-  fibertools_predict: 1
+  jasmine: 1
   sequali: 1
   kraken2: 1
   bam_to_fastq_gz: 1
@@ -26,7 +26,7 @@ set-resources:
     mem_mb: 10000
     runtime: 30
 
-  fibertools_predict:
+  jasmine:
     mem_mb: 10000
     runtime: 30
 
