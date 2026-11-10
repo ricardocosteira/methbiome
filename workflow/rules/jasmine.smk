@@ -23,9 +23,10 @@ rule jasmine:
 
                 samtools view -x MM,ML -O BAM -o "$intermediate_bam" "$uBAM"
 
-                jasmine --num-threads "$(getconf _NPROCESSORS_ONLN)" \
-                    --keep-kinetics \
-                    "$intermediate_bam" "$basecalled_bam"
+                jasmine printf '<%s>\n' --num-threads "$(getconf _NPROCESSORS_ONLN)" \
+                    --keep-kinetics \
+                    "intermediate_bam" \
+                    "basecalled_bam"
             done
         }} &> '{log}'
         """
