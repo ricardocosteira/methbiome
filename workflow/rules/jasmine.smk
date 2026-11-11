@@ -25,8 +25,8 @@ rule jasmine:
 
                 jasmine --num-threads "$(getconf _NPROCESSORS_ONLN)" \
                     --keep-kinetics \
-                    "intermediate_bam" \
-                    "basecalled_bam"
+                    "$intermediate_bam" \
+                    "$basecalled_bam"
             done
         }} &> '{log}'
         """
