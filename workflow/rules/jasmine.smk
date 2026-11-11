@@ -6,6 +6,8 @@ rule jasmine:
         directory(config["results"]["bam_dir"])
     conda:
         "../envs/main.yaml"
+    params:
+        intermediate_bam_dir=config["results"]["intermediate_bam_dir"]
     log:
         config["logs"]["jasmine"]
     shell:
@@ -18,7 +20,7 @@ rule jasmine:
                                 
                 filename_with_extension="$(basename "$uBAM")"
                 filename_without_extension="${{filename_with_extension%.*}}"
-                intermediate_bam="{output}/$filename_without_extension.cln.bam"
+                intermediate_bam="{params.intermediate_bam_dir}/$filename_without_extension.clean.bam"
                 basecalled_bam="{output}/$filename_without_extension.jasmine.bam"
 
                 samtools view -x MM,ML -O BAM -o "$intermediate_bam" "$uBAM"

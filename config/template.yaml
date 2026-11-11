@@ -79,7 +79,8 @@ resources:
         archive_path: ?f"{assets_dir}/kraken2_db.tar.gz"
 
 results:
-    dorado_intermediate_bam_path: ?f"{results_dir}/{output_name}.bam"
+    intermediate_bam_dir: ?f"{results_dir}/{output_name}_intermediate_bam"
+    intermediate_bam_path: ?f"{results_dir}/" + this["results"]["intermediate_bam_dir"] + "/{output_name}.bam"
     bam_dir: ?data_dir if this["input_files"]["data"]["basecalled"] else f"{results_dir}/{output_name}_bam" # With basecalled input the user's own directory is the BAM directory, so no rule produces it.
     dorado_invalid_dir: ?f"{results_dir}/{output_name}_bam_invalid"
     fastq_gz_dir: ?f"{results_dir}/{output_name}_fastq_gz"
