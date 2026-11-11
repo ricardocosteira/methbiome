@@ -14,7 +14,8 @@ rule jasmine:
         """
         {{
             mkdir -p '{output}'
-            
+            mkdir -p '{params.intermediate_bam_dir}'
+
             for uBAM in '{input.data}'/*.bam; do
                 [ -e "$uBAM" ] || continue
                                 
