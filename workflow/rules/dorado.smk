@@ -6,7 +6,8 @@ rule dorado:
         directory(config["results"]["bam_dir"])
     params:
         dorado_path=config["resources"]["dorado"]["binary_path"],
-        intermediate_bam_path=config["results"]["dorado_intermediate_bam_path"],
+        intermediate_bam_dir=config["results"]["intermediate_bam_dir"],
+        intermediate_bam_path=config["results"]["intermediate_bam_path"],
         min_quality=config["tool_specific_params"]["dorado"]["min_quality"],
         trim=config["tool_specific_params"]["dorado"]["trim"],
         methylation_model=config["tool_specific_params"]["dorado"]["methylation_model"],
@@ -29,6 +30,7 @@ rule dorado:
                 '{input.input_dir}' > '{params.intermediate_bam_path}'
 
             mkdir -p '{output}'
+            mkdir -p '{params.intermediate_bam_dir}'
 
             if [ '{params.demultiplexing}' == 'True' ]; then
                 mkdir -p '{params.dorado_invalid_dir}'

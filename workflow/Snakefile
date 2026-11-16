@@ -16,7 +16,7 @@ elif data_type == "ONT":
     include: "rules/dorado.smk"
 elif data_type == "PacBio":
     include: "rules/validate_bam_input.smk"
-    include: "rules/fibertools_predict.smk"
+    include: "rules/jasmine.smk"
 if config["input_files"]["dorado"]["archive"]["path"] is None:
     include: "rules/install_dorado.smk"
 include: "rules/bam_to_fastq_gz.smk"
