@@ -20,6 +20,8 @@ rule dorado:
     shell:
         """
         {{ 
+            mkdir -p '{params.intermediate_bam_dir}'
+
             '{params.dorado_path}' basecaller \
                 --recursive \
                 --verbose \
@@ -30,7 +32,6 @@ rule dorado:
                 '{input.input_dir}' > '{params.intermediate_bam_path}'
 
             mkdir -p '{output}'
-            mkdir -p '{params.intermediate_bam_dir}'
 
             if [ '{params.demultiplexing}' == 'True' ]; then
                 mkdir -p '{params.dorado_invalid_dir}'
