@@ -56,7 +56,14 @@ Smaller datasets that can be run on a laptop are available [here](https://drive.
 
 ### A. Operating Systems
 
-Linux x64 and macOS are supported. The pipeline targets SLURM clusters and has also been run end to end with the local profile on macOS, and on Google Colab.
+Linux x64 and macOS are supported. The pipeline targets SLURM clusters and can also be run end to end with the local profile, and on Google Colab.
+
+However, please note that macOS is not supported for PacBio basecalling. This is because Jasmine doesn't support arm64
+
+| Data type | Base caller | Platforms supported |
+| --- | --- | --- |
+| ONT | Dorado | Linux x64 and macOS. |
+| PacBio | Jasmine | Linux x64. On macOS only when the data is already basecalled, which skips Jasmine. |
 
 ### B. Execution Profiles
 
@@ -96,7 +103,7 @@ You do not have to install any of the tools methbiome uses, as it automatically 
 | Installed by | What |
 | --- | --- |
 | **You**, once, before starting | `conda`, `snakemake`, the SLURM executor plugin if you run on SLURM. |
-| **Snakemake**, automatically, on the first run | dorado, fibertools-rs, kraken2, ... |
+| **Snakemake**, automatically, on the first run | dorado, jasmine, kraken2, ... |
 
 
 ### A. Install Miniforge
@@ -154,7 +161,7 @@ To run several samples, write one configuration file per sample. They can all be
 | `input_files.data.dir.path` | path, no trailing `/` | Directory of the run's `.pod5` or `.bam` files. |
 | `input_files.data.dir.custom_path` | `true` / `false` | Use the path as-is, or under `resources/data`. |
 | `input_files.data.type` | `ONT` / `PacBio` | Platform of the input. |
-| `input_files.data.basecalled` | `true` / `false` | Whether the directory already holds basecalled BAMs. |
+| `input_files.data.basecalled` | `true` / `false` | Whether the directory already holds basecalled BAMs. Skips Dorado (ONT) or Jasmine (PacBio). |
 | `input_files.minimap2.custom_references_dir` | path / `null` | Where references and indices live; `null` uses `resources/references`. |
 | `input_files.minimap2.default_reference_filename` | `*.fasta` / `*.fna` | Reference for the whole run. |
 | `input_files.minimap2.default_index_filename` | `*.fai` / `null` | Reference index, needed above 4 GB; `null` if there is none. |
@@ -179,7 +186,9 @@ The section below those keys in `config/template.yaml` is generated from them. D
 
 #### 1. Data That Is Already Basecalled
 
-`input_files.data.basecalled` is `false` by default, which means methbiome produces the BAMs itself using Dorado or Fibertools. However, if it true, the basecalling step is skipped and the BAM files in `input_files.data.dir.path` are used as input for the downstream rules.
+`input_files.data.basecalled` is `false` by default, which means methbiome produces the BAMs itself, with Dorado for an ONT run and with Jasmine for a PacBio run.
+
+When it is `true`, the basecalling step is skipped and the BAM files in `input_files.data.dir.path` are used as input for the downstream rules.
 
 #### 2. Multi-Reference Mapping
 
@@ -223,7 +232,8 @@ The results from the pipeline are written to `results/<output_name>/`, and the l
 
 | Directory | Contents |
 | --- | --- |
-| `<output_name>_bam/` | Basecalled BAMs with modified-base tags (ONT) or BAMs with kinetic modifications called (PacBio). Not created when `basecalled: true`, because the run's own BAM directory is used instead. |
+| `<output_name>_bam/` | Basecalled BAMs with modified-base tags from Dorado (ONT) or basecalled BAMs with kinetic modifications called by Jasmine (PacBio). Not created when `basecalled: true`, because the run's own BAM directory is used instead. |
+| `<output_name>_intermediate_bam/` | PacBio: the input BAMs without their `MM`/`ML` tags, which then fed into Jasmine. ONT: temporary files produced by Dorado. |
 | `<output_name>_bam_invalid/` | Barcodes discarded by Dorado demultiplexing, if enabled. |
 | `<output_name>_fastq_gz/` | Basecalled reads as compressed FASTQ. |
 | `sequali_<output_name>/` | Sequali quality reports, one `.html` and one `.json` per input file. |
